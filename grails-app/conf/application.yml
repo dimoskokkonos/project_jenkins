@@ -2,7 +2,7 @@
 grails:
     profile: web
     codegen:
-        defaultPackage: crudgrails
+        defaultPackage: crudmusic
     gorm:
         reactor:
             # Whether to translate GORM events into Reactor events
@@ -93,12 +93,15 @@ management:
 
 ---
 hibernate:
+    allow_update_outside_transaction: true
+
     cache:
-        queries: false
+        queries: true
         use_second_level_cache: false
         use_query_cache: false
+        cache.provider_class: org.hibernate.cache.EhCacheProvider
 
-DataSource:
+dataSource:
     pooled: true
     jmxExport: true
     driverClassName: org.postgresql.Driver
@@ -136,6 +139,7 @@ environments:
                 testOnReturn: false
                 jdbcInterceptors: ConnectionState
                 defaultTransactionIsolation: 2 # TRANSACTION_READ_COMMITTED
+
 
 server:
     port:

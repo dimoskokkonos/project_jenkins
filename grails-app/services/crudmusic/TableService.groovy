@@ -5,14 +5,12 @@ import groovy.sql.Sql
 import java.sql.*
 @Transactional
 class TableService {
+    def dataSource
 
-    
+
     def tableCreation() {
-        //dbeaver
-
         def sql = new Sql(dataSource)
-        //        def sql = Sql.newInstance("jdbc:postgresql://localhost:5432/crud",
-//                "temp", "doubletemp", "org.postgresql.Driver")
+
 
         def createTableAlbum = """
             CREATE TABLE IF NOT EXISTS album (
@@ -49,10 +47,8 @@ class TableService {
     }
 
     def insertInitialValue() {
-        //FIXME: me yml application
-//        def sql = Sql.newInstance("jdbc:postgresql://localhost:5432/crud",
-//                "temp", "doubletemp", "org.postgresql.Driver")
         def sql = new Sql(dataSource)
+
 
         def insertSqlAlbum = """INSERT INTO album 
             (artist, album_title, song_number, release_date) VALUES 
@@ -118,8 +114,7 @@ class TableService {
     }
 
     def deleteTables() {
-//        def sql = Sql.newInstance("jdbc:postgresql://localhost:5432/crud",
-//                "temp", "doubletemp", "org.postgresql.Driver")
+
         def sql = new Sql(dataSource)
 
         sql.withTransaction {
@@ -132,25 +127,10 @@ class TableService {
     }
 
     def selectTables() {
-        def sql = Sql.newInstance("jdbc:postgresql://localhost:5432/crud",
-                "temp", "doubletemp", "org.postgresql.Driver")
-        def data2 = []
-        def data1
-        def data3 = sql.rows('SELECT * FROM album')
 
-        sql.query('SELECT * FROM album') { resultSet ->
-            while (resultSet.next()) {
-//                data2.add(resultSet.getString('artist'))
-                data2.add(resultSet.getString('artist'))
-            }
-        }
+        def sql = new Sql(dataSource)
+        def data = sql.rows('SELECT * FROM album')
 
-//        sql.query('SELECT firstname, lastname FROM Author') { resultSet ->
-//            while (resultSet.next()) {
-//                def first = resultSet.getString(1)
-//                def last = resultSet.getString('lastname')
-//                assert expected[rowNum++] == "$first $last"
-//            }
-        return data3
+        return data
     }
 }
