@@ -13,13 +13,17 @@ class AlbumController {
         tableService.insertInitialValue()
         redirect action:"index"
     }
+
     def index() {
         tableService.tableCreation()
     }
 
     def list() {
-        def returning = tableService.selectTables()
-        [tableData: returning]
+        def returning_data_1 = tableService.selectTables()
+        def returning_data_2 = tableService.manyGenres(1)
+
+        [genreData: returning_data_1.genresData, albumData: returning_data_1.albumData, mixedData :returning_data_2.data_of_albums_genre]
+
     }
 
 

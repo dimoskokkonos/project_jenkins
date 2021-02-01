@@ -129,8 +129,52 @@ class TableService {
     def selectTables() {
 
         def sql = new Sql(dataSource)
-        def data = sql.rows('SELECT * FROM album')
+        def data_of_albums = sql.rows('SELECT * FROM album')
+        def data_of_genres = sql.rows('SELECT * FROM genres')
 
-        return data
+
+        return [ albumData: data_of_albums, genresData: data_of_genres]
+    }
+
+    def manyGenres(id_tag) {
+
+        //TODO: change the names, iterate for every id
+
+        def sql = new Sql(dataSource)
+
+
+
+
+        def insertSqlManyMany = """
+            SELECT genres.name FROM genres 
+                INNER JOIN album_genres ON genres.id=album_genres.genre_id
+                INNER JOIN album ON album.id=album_genres.album_id 
+                WHERE album.id = ${id_tag}
+            """;
+        def list_thingy = []
+        def data_of_albums_genre = sql.rows(insertSqlManyMany).each{
+            row->
+                list_thingy.add("$row.name")
+        }
+        id_tag = 2
+        insertSqlManyMany = """
+            SELECT genres.name FROM genres 
+                INNER JOIN album_genres ON genres.id=album_genres.genre_id
+                INNER JOIN album ON album.id=album_genres.album_id 
+                WHERE album.id = ${id_tag}
+            """;
+        def list_thingy2 = []
+        data_of_albums_genre = sql.rows(insertSqlManyMany).each{
+            row->
+                list_thingy2.add("$row.name")
+        }
+
+        def list_thingy3 = []
+        list_thingy3.add(list_thingy)
+        list_thingy3.add(list_thingy2)
+
+        println list_thingy3
+
+        return [data_of_albums_genre: list_thingy3]
     }
 }
