@@ -6,12 +6,12 @@ class AlbumController {
 
     def deleteAll() {
         tableService.deleteTables()
-        redirect action:"index"
+        redirect (action:"index")
     }
 
     def initialization() {
         tableService.insertInitialValue()
-        redirect action:"index"
+        redirect (action:"index")
     }
 
     def index() {
