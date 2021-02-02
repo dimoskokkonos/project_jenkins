@@ -13,13 +13,14 @@
 
     <body>
         <div>
-            <h1>I am your index</h1>
+            <h1>Main Page</h1>
         </div>
         <div>
             <g:link controller="album" action="index">Refresh</g:link><br />
-            <g:link controller="album" action="deleteAll">Drop the tables</g:link><br />
-            <g:link controller="album" action="initialization">Initialize with the default values</g:link><br />
-            <g:link controller="album" action="list">View The Data</g:link><br />
+            <g:link controller="album" action="remakeTables">Remake the tables</g:link><br />
+%{--            <g:link controller="album" action="deleteAll">Drop the tables</g:link><br />--}%
+%{--            <g:link controller="album" action="initialization">Initialize with the default values</g:link><br />--}%
+            <g:link controller="album" action="list">View The Tables</g:link><br />
         </div>
 
 

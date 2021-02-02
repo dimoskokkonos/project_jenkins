@@ -7,19 +7,19 @@ import java.sql.*
 class TableService {
     def dataSource
 
+    //TODO: ? ΣΕ $ στα insert μου!
 
     def tableCreation() {
+
         def sql = new Sql(dataSource)
-
-
         def createTableAlbum = """
             CREATE TABLE IF NOT EXISTS album (
                 id SERIAL PRIMARY KEY,
                 artist VARCHAR(50) NOT NULL,
-                album_title VARCHAR(50) NOT NULL,
-                song_number NUMERIC, 
-                release_date DATE
-            );
+                albumTitle VARCHAR(50) NOT NULL,
+                songNumber NUMERIC, 
+                releaseDate DATE
+            )
             """
 
         def createTableGenre = """
@@ -27,176 +27,232 @@ class TableService {
                 id SERIAL PRIMARY KEY,
                 name VARCHAR(50) NOT NULL,
                 creator VARCHAR(50) DEFAULT 'unknown',
-                is_popular BOOLEAN DEFAULT false
-            );
+                isPopular BOOLEAN DEFAULT false
+            )
             """
 
         def createTableManyToMany = """
             CREATE TABLE IF NOT EXISTS album_genres (
-                album_id INTEGER REFERENCES album(id),
-                genre_id INTEGER REFERENCES genres(id),
-                PRIMARY KEY(album_id, genre_id)
-            );
+                albumId INTEGER REFERENCES album(id) ON DELETE CASCADE,
+                genreId INTEGER REFERENCES genres(id) ON DELETE CASCADE,
+                PRIMARY KEY(albumId, genreId)
+            )
             """
-
-        sql.execute(createTableAlbum);
-        sql.execute(createTableGenre);
-        sql.execute(createTableManyToMany);
-
-        sql.close()
+        sql.execute(createTableAlbum)
+        sql.execute(createTableGenre)
+        sql.execute(createTableManyToMany)
     }
 
     def insertInitialValue() {
         def sql = new Sql(dataSource)
 
 
-        def insertSqlAlbum = """INSERT INTO album 
-            (artist, album_title, song_number, release_date) VALUES 
-            (?, ?, ?, TO_DATE(?, \'DD/MM/YYYY\'))""";
+        // Insert for the album table
+        def parameters = [param1: 'BobbyZ', param2: 'The Fly Airplane', param3: 9, param4: '01/01/2000']
+        def insertAlbum = """INSERT INTO album
+            (artist, albumTitle, songNumber, releaseDate) VALUES
+            (${parameters.param1}, ${parameters.param2}, ${parameters.param3}, TO_DATE(${parameters.param4}, \'DD/MM/YYYY\'))"""
+        sql.execute(insertAlbum)
 
-        def insertSqlGenre = """INSERT INTO genres 
-            (name, creator, is_popular) VALUES 
-            (?, ?, ?)""";
+        parameters = [param1: 'John Smith', param2: 'Time and Relative DIS', param3: 13, param4: '11/08/1960']
+        insertAlbum = """INSERT INTO album
+            (artist, albumTitle, songNumber, releaseDate) VALUES
+            (${parameters.param1}, ${parameters.param2}, ${parameters.param3}, TO_DATE(${parameters.param4}, \'DD/MM/YYYY\'))"""
+        sql.execute(insertAlbum)
+
+        parameters = [param1: 'Ethna', param2: 'The Hell Ladies', param3: 5, param4: '03/03/2013']
+        insertAlbum = """INSERT INTO album
+            (artist, albumTitle, songNumber, releaseDate) VALUES
+            (${parameters.param1}, ${parameters.param2}, ${parameters.param3}, TO_DATE(${parameters.param4}, \'DD/MM/YYYY\'))"""
+        sql.execute(insertAlbum)
+
+        parameters = [param1: 'Miho', param2: 'Solo Material', param3: 1, param4: '02/01/2019']
+        insertAlbum = """INSERT INTO album
+            (artist, albumTitle, songNumber, releaseDate) VALUES
+            (${parameters.param1}, ${parameters.param2}, ${parameters.param3}, TO_DATE(${parameters.param4}, \'DD/MM/YYYY\'))"""
+        sql.execute(insertAlbum)
+
+
+        //Insert for musical genres tables
+        parameters = [param1: 'Funk', param2: 'The all lawyer band', param3: true]
+        insertAlbum = """INSERT INTO genres 
+            (name, creator, isPopular) VALUES 
+            (${parameters.param1}, ${parameters.param2}, ${parameters.param3})"""
+        sql.execute(insertAlbum)
+
+        parameters = [param1: 'Rock', param2: 'The Rockerator', param3: false]
+        insertAlbum = """INSERT INTO genres 
+            (name, creator, isPopular) VALUES 
+            (${parameters.param1}, ${parameters.param2}, ${parameters.param3})"""
+        sql.execute(insertAlbum)
+
+        parameters = [param1: 'K-Pop', param2: 'Kawai Corporation', param3: false]
+        insertAlbum = """INSERT INTO genres 
+            (name, creator, isPopular) VALUES 
+            (${parameters.param1}, ${parameters.param2}, ${parameters.param3})"""
+        sql.execute(insertAlbum)
+
+        parameters = [param1: 'Metal', param2: 'Iron Man', param3: true]
+        insertAlbum = """INSERT INTO genres 
+            (name, creator, isPopular) VALUES 
+            (${parameters.param1}, ${parameters.param2}, ${parameters.param3})"""
+        sql.execute(insertAlbum)
+
+        parameters = [param1: 'Jazz', param2: 'Slow Mo', param3: true]
+        insertAlbum = """INSERT INTO genres 
+            (name, creator, isPopular) VALUES 
+            (${parameters.param1}, ${parameters.param2}, ${parameters.param3})"""
+        sql.execute(insertAlbum)
+
+        parameters = [param1: 'Traditional', param2: 'The People', param3: false]
+        insertAlbum = """INSERT INTO genres 
+            (name, creator, isPopular) VALUES 
+            (${parameters.param1}, ${parameters.param2}, ${parameters.param3})"""
+        sql.execute(insertAlbum)
+
+        parameters = [param1: 'Trap', param2: 'IT IS A TRAP', param3: false]
+        insertAlbum = """INSERT INTO genres 
+            (name, creator, isPopular) VALUES 
+            (${parameters.param1}, ${parameters.param2}, ${parameters.param3})"""
+        sql.execute(insertAlbum)
+
+
 
         def insertSqlManyMany = """INSERT INTO album_genres 
-            (album_id, genre_id) VALUES 
-            (?, ?)""";
+            (albumId, genreId) VALUES 
+            (?, ?)"""
 
-        //Transaction for inserts in album
-        sql.withTransaction {
-            def paramsAlbum = ['BobbyZ', 'The Fly Airplane', 9, '01/01/2000'];
-            sql.execute(insertSqlAlbum, paramsAlbum);
-            paramsAlbum = ['John Smith', 'Time and Relative DIS', 13, '11/08/1960'];
-            sql.execute(insertSqlAlbum, paramsAlbum);
-            paramsAlbum = ['Ethna', 'The hell ladies', 5, '03/03/2013'];
-            sql.execute(insertSqlAlbum, paramsAlbum);
-            paramsAlbum = ['Miho', 'The solo comp', 1, '02/01/2019'];
-            sql.execute(insertSqlAlbum, paramsAlbum);
-        }
+        parameters = [param1: 1, param2: 1]
+        insertAlbum = """INSERT INTO album_genres 
+            (albumId, genreId) VALUES 
+            (${parameters.param1}, ${parameters.param2})"""
+        sql.execute(insertAlbum)
+        parameters = [param1: 1, param2: 3]
+        insertAlbum = """INSERT INTO album_genres 
+            (albumId, genreId) VALUES 
+            (${parameters.param1}, ${parameters.param2})"""
+        sql.execute(insertAlbum)
+        parameters = [param1: 1, param2: 4]
+        insertAlbum = """INSERT INTO album_genres 
+            (albumId, genreId) VALUES 
+            (${parameters.param1}, ${parameters.param2})"""
+        sql.execute(insertAlbum)
+        parameters = [param1: 1, param2: 7]
+        insertAlbum = """INSERT INTO album_genres 
+            (albumId, genreId) VALUES 
+            (${parameters.param1}, ${parameters.param2})"""
+        sql.execute(insertAlbum)
 
-        //Transaction for inserts in genres
-        sql.withTransaction {
-            def paramsGenre = ['Funk', "", true];
-            sql.execute(insertSqlGenre, paramsGenre);
-            paramsGenre = ['Rock', "The rockerator", false];
-            sql.execute(insertSqlGenre, paramsGenre);
-            paramsGenre = ['K-Pop', "Kawai Corporation", false];
-            sql.execute(insertSqlGenre, paramsGenre);
-            paramsGenre = ['Metal', "IronMan", true];
-            sql.execute(insertSqlGenre, paramsGenre);
+        parameters = [param1: 2, param2: 1]
+        insertAlbum = """INSERT INTO album_genres 
+            (albumId, genreId) VALUES 
+            (${parameters.param1}, ${parameters.param2})"""
+        sql.execute(insertAlbum)
+        parameters = [param1: 2, param2: 2]
+        insertAlbum = """INSERT INTO album_genres 
+            (albumId, genreId) VALUES 
+            (${parameters.param1}, ${parameters.param2})"""
+        sql.execute(insertAlbum)
+        parameters = [param1: 2, param2: 6]
+        insertAlbum = """INSERT INTO album_genres 
+            (albumId, genreId) VALUES 
+            (${parameters.param1}, ${parameters.param2})"""
+        sql.execute(insertAlbum)
 
-        }
+        parameters = [param1: 3, param2: 3]
+        insertAlbum = """INSERT INTO album_genres 
+            (albumId, genreId) VALUES 
+            (${parameters.param1}, ${parameters.param2})"""
+        sql.execute(insertAlbum)
+        parameters = [param1: 3, param2: 4]
+        insertAlbum = """INSERT INTO album_genres 
+            (albumId, genreId) VALUES 
+            (${parameters.param1}, ${parameters.param2})"""
+        sql.execute(insertAlbum)
+        parameters = [param1: 3, param2: 6]
+        insertAlbum = """INSERT INTO album_genres 
+            (albumId, genreId) VALUES 
+            (${parameters.param1}, ${parameters.param2})"""
+        sql.execute(insertAlbum)
+        parameters = [param1: 3, param2: 7]
+        insertAlbum = """INSERT INTO album_genres 
+            (albumId, genreId) VALUES 
+            (${parameters.param1}, ${parameters.param2})"""
+        sql.execute(insertAlbum)
 
-        //Transaction for inserts relational table
-        sql.withTransaction {
-            def paramsManyMany = [1, 1];
-            sql.execute(insertSqlManyMany, paramsManyMany);
-            paramsManyMany = [1, 3];
-            sql.execute(insertSqlManyMany, paramsManyMany);
-            paramsManyMany = [2, 1];
-            sql.execute(insertSqlManyMany, paramsManyMany);
-            paramsManyMany = [2, 2];
-            sql.execute(insertSqlManyMany, paramsManyMany);
-            paramsManyMany = [2, 4];
-            sql.execute(insertSqlManyMany, paramsManyMany);
-            paramsManyMany = [3, 2];
-            sql.execute(insertSqlManyMany, paramsManyMany);
-            paramsManyMany = [3, 4];
-            sql.execute(insertSqlManyMany, paramsManyMany);
-            paramsManyMany = [4, 1];
-            sql.execute(insertSqlManyMany, paramsManyMany);
-            paramsManyMany = [4, 3];
-            sql.execute(insertSqlManyMany, paramsManyMany);
+        parameters = [param1: 4, param2: 1]
+        insertAlbum = """INSERT INTO album_genres 
+            (albumId, genreId) VALUES 
+            (${parameters.param1}, ${parameters.param2})"""
+        sql.execute(insertAlbum)
+        parameters = [param1: 4, param2: 2]
+        insertAlbum = """INSERT INTO album_genres 
+            (albumId, genreId) VALUES 
+            (${parameters.param1}, ${parameters.param2})"""
+        sql.execute(insertAlbum)
+        parameters = [param1: 4, param2: 5]
+        insertAlbum = """INSERT INTO album_genres 
+            (albumId, genreId) VALUES 
+            (${parameters.param1}, ${parameters.param2})"""
+        sql.execute(insertAlbum)
+        parameters = [param1: 4, param2: 6]
+        insertAlbum = """INSERT INTO album_genres 
+            (albumId, genreId) VALUES 
+            (${parameters.param1}, ${parameters.param2})"""
+        sql.execute(insertAlbum)
+        parameters = [param1: 4, param2: 7]
+        insertAlbum = """INSERT INTO album_genres 
+            (albumId, genreId) VALUES 
+            (${parameters.param1}, ${parameters.param2})"""
+        sql.execute(insertAlbum)
 
-        }
-
-        sql.close()
     }
 
     def deleteTables() {
-
         def sql = new Sql(dataSource)
 
-        sql.withTransaction {
-            sql.execute("DROP TABLE IF EXISTS album CASCADE ;");
-            sql.execute("DROP TABLE IF EXISTS genres CASCADE;");
-            sql.execute("DROP TABLE IF EXISTS album_genres CASCADE;");
-        }
-
-        sql.close();
+        sql.execute("DROP TABLE IF EXISTS album CASCADE ;")
+        sql.execute("DROP TABLE IF EXISTS genres CASCADE;")
+        sql.execute("DROP TABLE IF EXISTS album_genres CASCADE;")
     }
 
     def selectTables() {
-
         def sql = new Sql(dataSource)
-        def data_of_albums = sql.rows('SELECT * FROM album')
-        def data_of_genres = sql.rows('SELECT * FROM genres')
+        def dataOfAlbums = sql.rows('SELECT * FROM album')
+        def dataOfGenres = sql.rows('SELECT * FROM genres')
 
-
-        return [ albumData: data_of_albums, genresData: data_of_genres]
+        return [albumData: dataOfAlbums, genresData: dataOfGenres]
     }
 
     def manyGenres() {
-
-        //TODO: change the names, iterate for every id
-
         def sql = new Sql(dataSource)
+        def albumsID = sql.rows('SELECT id FROM album')
+        def dataOfAlbumsGenre =[]
 
-        def albumsID = sql.rows('SELECT id FROM genres')
-
-        def outer_list =[]
         albumsID.each{id_tag ->
-
-            def inner_list = []
+            def tempMap = []
             def selectQuery = """
                 SELECT genres.name FROM genres 
-                    INNER JOIN album_genres ON genres.id=album_genres.genre_id
-                    INNER JOIN album ON album.id=album_genres.album_id 
-                    WHERE album_id=${id_tag.id}
+                    INNER JOIN album_genres ON genres.id=album_genres.genreId
+                    INNER JOIN album ON album.id=album_genres.albumId 
+                    WHERE albumId=${id_tag.id}
                 """;
             sql.eachRow(selectQuery) {row ->
-                inner_list.add("$row.name")
+                tempMap.add("$row.name")
             }
-            outer_list.add(inner_list)
-
+            dataOfAlbumsGenre.add(tempMap)
         }
-        println ""
+        return [dataOfAlbumsGenre: dataOfAlbumsGenre]
+    }
 
-        println outer_list
 
-//
-//        println outer_list
-//
-//        def insertSqlManyMany = """
-//            SELECT genres.name FROM genres
-//                INNER JOIN album_genres ON genres.id=album_genres.genre_id
-//                INNER JOIN album ON album.id=album_genres.album_id
-//                WHERE album.id = ${id_tag}
-//            """;
-//        def list_thingy = []
-//        def data_of_albums_genre = sql.rows(insertSqlManyMany).each{
-//            row->
-//                list_thingy.add("$row.name")
-//        }
-//        id_tag = 2
-//        insertSqlManyMany = """
-//            SELECT genres.name FROM genres
-//                INNER JOIN album_genres ON genres.id=album_genres.genre_id
-//                INNER JOIN album ON album.id=album_genres.album_id
-//                WHERE album.id = ${id_tag}
-//            """;
-//        def list_thingy2 = []
-//        data_of_albums_genre = sql.rows(insertSqlManyMany).each{
-//            row->
-//                list_thingy2.add("$row.name")
-//        }
-//
-//        def list_thingy3 = []
-//        list_thingy3.add(list_thingy)
-//        list_thingy3.add(list_thingy2)
-//
-//        println list_thingy3
-//        def list_thingy3 = []
-        return [data_of_albums_genre: outer_list]
+    def deleteRowAlbum(deleteId) {
+        def sql = new Sql(dataSource)
+        sql.execute("DELETE FROM album Where id=${deleteId}");
+    }
+
+    def deleteRowGenre(deleteId) {
+        def sql = new Sql(dataSource)
+        sql.execute("DELETE FROM genres Where id=${deleteId}");
     }
 }

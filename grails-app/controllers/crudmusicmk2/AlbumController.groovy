@@ -6,40 +6,50 @@ class AlbumController {
 
     def deleteAll() {
         tableService.deleteTables()
-        redirect (action:"index")
+        redirect (action: 'index')
     }
 
     def initialization() {
         tableService.insertInitialValue()
-        redirect (action:"index")
+        redirect (action: 'index')
     }
 
     def index() {
-        tableService.tableCreation()
     }
 
     def list() {
-        def returning_data_1 = tableService.selectTables()
-        def returning_data_2 = tableService.manyGenres()
-        def new_genresData = []
-        def outer_list = []
+        def selectOfTablesAlbumGenres = tableService.selectTables()
+        def selectOfAlbumGenresRelation = tableService.manyGenres()
+        def albumDataWithGenre = []
 
-        for (def i = 0; i <returning_data_1.albumData.size(); i++) {
-            def temp = returning_data_1.albumData[i]
-            def inner_list = []
+        for (def i = 0; i <selectOfTablesAlbumGenres.albumData.size(); i++) {
+            def temp = selectOfTablesAlbumGenres.albumData[i]
+            def temporaryMap = []
 
-            inner_list.add(temp.id)
-            inner_list.add(temp.artist)
-            inner_list.add(temp.album_title)
-            inner_list.add(temp.song_number)
-            inner_list.add(temp.release_date)
-            inner_list.add(returning_data_2.data_of_albums_genre[i].join(", "))
+            temporaryMap.add(temp.id)
+            temporaryMap.add(temp.artist)
+            temporaryMap.add(temp.albumTitle)
+            temporaryMap.add(temp.songNumber)
+            temporaryMap.add(temp.releaseDate)
+            temporaryMap.add(selectOfAlbumGenresRelation.dataOfAlbumsGenre[i].join(", "))
 
-            outer_list.add(inner_list)
+            albumDataWithGenre.add(temporaryMap)
         }
-
-        [genreData: returning_data_1.genresData, albumData: outer_list]
+        [genreData: selectOfTablesAlbumGenres.genresData, albumData: albumDataWithGenre]
     }
 
+    def deleteOne() {
+        if (params.entry) { tableService.deleteRowAlbum(Integer.parseInt(params.entry)) }
+        if (params.entry2) { tableService.deleteRowGenre(Integer.parseInt(params.entry2)) }
 
+        redirect (action: 'list')
+    }
+
+    def remakeTables() {
+        tableService.deleteTables()
+        tableService.tableCreation()
+        tableService.insertInitialValue()
+
+        redirect (action: 'list')
+    }
 }

@@ -21,7 +21,7 @@
                 <col width="200px" />
                 <col width="250px" />
                 <col width="150px" />
-                <col width="400px" />
+                <col width="200px" />
                 <tr>
                     <td>Id of the album</td>
                     <td>Artist</td>
@@ -39,15 +39,19 @@
                     <col width="200px" />
                     <col width="250px" />
                     <col width="150px" />
-                    <col width="400px" />
-
+                    <col width="220px" />
                     <tr>
                         <g:each in="${row}" var="row2">
                             <td>${row2}</td>
                         </g:each>
-                        <br/>
+                        <td>
+                            <g:link controller="album" action="deleteOne" method="post" params="[entry:row[0]]">
+                                <input type="button" value="Delete Entry" class="button"/>
+                            </g:link>
+                        </td><br/>
                     </tr>
                 </table>
+
             </g:each><br/>
         </div>
 
@@ -64,6 +68,7 @@
                     <td>Creator of the music genre</td>
                     <td>Popular Genre</td>
                 </tr>
+
             </table>
 
             <g:each in="${genreData}" var="row">
@@ -71,27 +76,29 @@
                     <col width="120px" />
                     <col width="120px" />
                     <col width="200px" />
+                    <col width="120px" />
                     <col width="250px" />
+
                     <tr>
                         <td>${row.id}</td>
                         <td>${row.name}</td>
                         <td>${row.creator}</td>
-                        <td>${row.is_popular}</td>
+                        <td>${row.isPopular}</td>
+                        <td>
+                            <g:link controller="album" action="deleteOne" method="post" params="[entry2:row.id]">
+                                <input type="button" value="Delete Genre" class="button"/>
+                            </g:link>
+                        </td>
                         <br/>
                     </tr>
+
                 </table>
             </g:each><br/>
-        </div>
-%{--        <div>--}%
-%{--            <g:link controller="album" action="index">Return to the main page</g:link><br />--}%
-%{--        </div>--}%
+        </div><br/>
 
-%{--    <div>--}%
-%{--        <g:each in="${mixedData}" var="row">--}%
-%{--            r=${row} <br/>--}%
-%{--        </g:each>--}%
-%{--    </div>--}%
 
+    <g:link controller="album" action="index">Return to Main Page</g:link><br />
+    <g:link controller="album" action="remakeTables">AGAIN, BUT BETTER</g:link>
 
     </body>
 </html>
