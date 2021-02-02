@@ -196,7 +196,7 @@ class TableService {
 //        list_thingy3.add(list_thingy2)
 //
 //        println list_thingy3
-        def list_thingy3 = []
+//        def list_thingy3 = []
         return [data_of_albums_genre: outer_list]
     }
 }
