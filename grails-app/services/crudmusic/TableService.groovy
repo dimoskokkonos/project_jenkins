@@ -30,7 +30,7 @@ class TableService {
                 isPopular BOOLEAN DEFAULT false
             )
             """
-
+//asdaadsasda
         def createTableManyToMany = """
             CREATE TABLE IF NOT EXISTS album_genres (
                 albumId INTEGER REFERENCES album(id) ON DELETE CASCADE,
