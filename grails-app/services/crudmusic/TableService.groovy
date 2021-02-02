@@ -7,8 +7,6 @@ import java.sql.*
 class TableService {
     def dataSource
 
-    //TODO: ? ΣΕ $ στα insert μου!
-
     def tableCreation() {
 
         def sql = new Sql(dataSource)
@@ -25,12 +23,11 @@ class TableService {
         def createTableGenre = """
             CREATE TABLE IF NOT EXISTS genres (
                 id SERIAL PRIMARY KEY,
-                name VARCHAR(50) NOT NULL,
+                name VARCHAR(50) NOT NULL UNIQUE,
                 creator VARCHAR(50) DEFAULT 'unknown',
                 isPopular BOOLEAN DEFAULT false
             )
             """
-//asdaadsasda
         def createTableManyToMany = """
             CREATE TABLE IF NOT EXISTS album_genres (
                 albumId INTEGER REFERENCES album(id) ON DELETE CASCADE,
@@ -45,7 +42,6 @@ class TableService {
 
     def insertInitialValue() {
         def sql = new Sql(dataSource)
-
 
         // Insert for the album table
         def parameters = [param1: 'BobbyZ', param2: 'The Fly Airplane', param3: 9, param4: '01/01/2000']
@@ -245,7 +241,6 @@ class TableService {
         return [dataOfAlbumsGenre: dataOfAlbumsGenre]
     }
 
-
     def deleteRowAlbum(deleteId) {
         def sql = new Sql(dataSource)
         sql.execute("DELETE FROM album Where id=${deleteId}");
@@ -254,5 +249,34 @@ class TableService {
     def deleteRowGenre(deleteId) {
         def sql = new Sql(dataSource)
         sql.execute("DELETE FROM genres Where id=${deleteId}");
+    }
+
+    def insertEntry(albumArtist, albumTitle, albumSongNumber, albumReleaseDate, albumGenres) {
+        def sql = new Sql(dataSource)
+
+        // Αν επιλέχθηκε το albumArtist, έγινε χρήση του πρώτου button και άρα είσοδος δεδομένου στον album πίνακα
+        if (albumArtist) {
+            def parameters = [param1: albumArtist, param2: albumTitle, param3: albumSongNumber, param4: albumReleaseDate]
+            def insertAlbum = """INSERT INTO album
+                (artist, albumTitle, songNumber, releaseDate) VALUES
+                (${parameters.param1}, ${parameters.param2}, ${parameters.param3}, TO_DATE(${parameters.param4}, \'DD/MM/YYYY\'))"""
+
+            def albumEntry = sql.executeInsert(insertAlbum)
+            def idEntry = albumEntry[0][0]
+
+            albumGenres.each { genreName ->
+                println ""
+                def tempGenreId = sql.rows("""SELECT genres.id FROM genres WHERE genres.name = ${genreName}""")
+
+                def params = [param1: idEntry, param2: tempGenreId.id[0]]
+                insertAlbum = """INSERT INTO album_genres
+                    (albumId, genreId) VALUES
+                    (${params.param1}, ${params.param2})"""
+                sql.execute(insertAlbum)
+            }
+        }
+
+        //TODO: να προσθεσω διαδικασία για είσοδο στον πίνακα genre.. θέλει ένα insert μόνο, όχι relational
+
     }
 }

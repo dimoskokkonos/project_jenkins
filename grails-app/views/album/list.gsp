@@ -48,6 +48,11 @@
                             <g:link controller="album" action="deleteOne" method="post" params="[entry:row[0]]">
                                 <input type="button" value="Delete Entry" class="button"/>
                             </g:link>
+
+%{--                            TODO: Implement update functionality to the button--}%
+                            <g:link controller="album" action="update" method="post">
+                                <input type="button" value="Edit --> WIP" class="button"/>
+                            </g:link>
                         </td><br/>
                     </tr>
                 </table>
@@ -87,6 +92,11 @@
                         <td>
                             <g:link controller="album" action="deleteOne" method="post" params="[entry2:row.id]">
                                 <input type="button" value="Delete Genre" class="button"/>
+                            </g:link>
+
+%{--                            TODO: Implement update functionality to the button--}%
+                            <g:link controller="album" action="update" method="post">
+                                <input type="button" value="Edit" class="button"/>
                             </g:link>
                         </td>
                         <br/>

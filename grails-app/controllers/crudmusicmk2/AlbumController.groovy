@@ -52,4 +52,25 @@ class AlbumController {
 
         redirect (action: 'list')
     }
+
+    def create() {
+        def selectDataFromTables = tableService.selectTables()
+
+        [genresData: selectDataFromTables.genresData]
+
+    }
+
+    def insert() {
+        def date = params.releaseDate_day + '-' + params.releaseDate_month + '-' + params.releaseDate_year
+        //TODO: να προσθέσω έξτρα μεταβλητές στην insertEntry ώστε να κανει διπλό insert
+
+        tableService.insertEntry(params.artist, params.albumTitle,Integer.parseInt(params.songNumber), date, params.genres)
+
+        redirect (action: 'create')
+    }
+
+    def update() {
+        //TODO: Να κάνω update crud fucntion.. Δεν έχω view.. Να δω που, πως θα γίνει το update.. funcionality όπως delOne ίσως
+        redirect (action: 'list')
+    }
 }
