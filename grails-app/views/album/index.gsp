@@ -20,7 +20,6 @@
             <g:link controller="album" action="deleteAll">Drop the tables</g:link><br />
             <g:link controller="album" action="initialization">Initialize with the default values</g:link><br />
             <g:link controller="album" action="list">View The Data</g:link><br />
-
         </div>
 
 

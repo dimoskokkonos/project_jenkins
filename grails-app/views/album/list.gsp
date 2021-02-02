@@ -13,9 +13,6 @@
     </head>
     <body>
 
-    //TODO: add names of genres to the matrix of albums
-
-
         <div>
             <h1>The Album Data</h1>
             <table class="fixed">
@@ -24,12 +21,14 @@
                 <col width="200px" />
                 <col width="250px" />
                 <col width="150px" />
+                <col width="400px" />
                 <tr>
                     <td>Id of the album</td>
                     <td>Artist</td>
                     <td>Title of the Album</td>
                     <td>Number of songs in the album</td>
                     <td>Album Release Date</td>
+                    <td>Music Genres of the Album</td>
                 </tr>
             </table>
 
@@ -40,12 +39,12 @@
                     <col width="200px" />
                     <col width="250px" />
                     <col width="150px" />
+                    <col width="400px" />
+
                     <tr>
-                        <td>${row.id}</td>
-                        <td>${row.artist}</td>
-                        <td>${row.album_title}</td>
-                        <td>${row.song_number}</td>
-                        <td>${row.release_date}</td>
+                        <g:each in="${row}" var="row2">
+                            <td>${row2}</td>
+                        </g:each>
                         <br/>
                     </tr>
                 </table>
@@ -83,15 +82,15 @@
                 </table>
             </g:each><br/>
         </div>
-        <div>
-            <g:link controller="album" action="index">Return to the main page</g:link><br />
-        </div>
+%{--        <div>--}%
+%{--            <g:link controller="album" action="index">Return to the main page</g:link><br />--}%
+%{--        </div>--}%
 
-    <div>
-        <g:each in="${mixedData}" var="row">
-            r=${row} <br/>
-        </g:each>
-    </div>
+%{--    <div>--}%
+%{--        <g:each in="${mixedData}" var="row">--}%
+%{--            r=${row} <br/>--}%
+%{--        </g:each>--}%
+%{--    </div>--}%
 
 
     </body>
