@@ -144,20 +144,26 @@ class TableService {
 
         def albumsID = sql.rows('SELECT id FROM genres')
 
-        def outer_list =[1]
+        def outer_list =[]
         albumsID.each{id_tag ->
+
             def inner_list = []
             def selectQuery = """
                 SELECT genres.name FROM genres 
                     INNER JOIN album_genres ON genres.id=album_genres.genre_id
                     INNER JOIN album ON album.id=album_genres.album_id 
-                    WHERE album.id = ${id_tag}
+                    WHERE album_id=${id_tag.id}
                 """;
-            sql.rows(selectQuery).each{row->
+            sql.eachRow(selectQuery) {row ->
                 inner_list.add("$row.name")
             }
             outer_list.add(inner_list)
+
         }
+        println ""
+
+        println outer_list
+
 //
 //        println outer_list
 //
@@ -190,7 +196,7 @@ class TableService {
 //        list_thingy3.add(list_thingy2)
 //
 //        println list_thingy3
-        list_thingy3 = [1]
-        return [data_of_albums_genre: list_thingy3]
+        def list_thingy3 = []
+        return [data_of_albums_genre: outer_list]
     }
 }
