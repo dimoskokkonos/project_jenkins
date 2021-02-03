@@ -109,12 +109,12 @@
                 Title of the album: <g:textField required="true" name='albumTitle' value="${formDataAlbum.albumtitle}"/> <br />
                 Number of songs: <g:textField required="true" name='songNumber' value="${formDataAlbum.songnumber}"/> <br />
                 Release Date: <g:datePicker name='releaseDate' precision="day" value="${formDataAlbum.releasedate}"/> <br />
-                <g:hiddenField name="hiddenId" value="${formDataAlbum.id}" />
+                <g:hiddenField name="idFormAlbum" value="${formDataAlbum.id}" />
                     Genre: <g:select name="genres"
                                  from="${dataGenresName}"
                                  multiple="multiple"
                                  value="${formDataGenresOfAlbum}" /> <br />
-                <g:actionSubmit value="Save" action="update" params="[id: 1]"/>
+                <g:actionSubmit value="Save" action="update"/>
             </g:form>
         </div>
 
@@ -124,8 +124,8 @@
             <g:form>
                 Name of Music Genre: <g:textField required="true" name='name' value="${formDataGenres.name}"/> <br />
                 Name of Creator: <g:textField required="true" name='creator' value="${formDataGenres.creator}"/> <br />
-                Popular Music Genre: <g:checkBox  checked="false" name='isPopular' value="${formDataGenres.isPopular}"/> <br />
-                <g:hiddenField name="hiddenId" value="${formDataAlbum.id}" value="${formDataGenres.id}"/><br />
+                Popular Music Genre: <g:checkBox  checked="${formDataGenres.isPopular}" name='isPopular'/> <br />
+                <g:hiddenField name="idFormGenre" value="${formDataGenres.id}"/><br />
                 <g:actionSubmit value="Save" action="update"/>
             </g:form>
         </div>

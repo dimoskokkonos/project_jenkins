@@ -254,8 +254,6 @@ class TableService {
         //Χρήση της εισόδου albumArtist: αν υπάρχει τότε έγινε κλικ του create album κουμπιού. Αλλιώς έγινε κλικ του κουμπιού
         //create genre.. Η action insert μπορεί να γίνει μόνο από αυτά τα δύο κουμπιά.
         if (albumArtist) {
-            print albumArtist
-
             def parameters = [param1: albumArtist, param2: albumTitle, param3: albumSongNumber, param4: albumReleaseDate]
             def insertAlbum = """INSERT INTO album
                 (artist, albumTitle, songNumber, releaseDate) VALUES
@@ -264,14 +262,21 @@ class TableService {
             def albumEntry = sql.executeInsert(insertAlbum)
             def idEntry = albumEntry[0][0]
 
-            albumGenres.each { genreNameForAlbum ->
-                println ""
-                def tempGenreId = sql.rows("""SELECT genres.id FROM genres WHERE genres.name = ${genreNameForAlbum}""")
+            if (albumGenres[0].size() > 1) {
+                albumGenres.each { genreNameForAlbum ->
+                    def tempGenreId = sql.rows("""SELECT genres.id FROM genres WHERE genres.name = ${genreNameForAlbum}""")
 
-                def params = [param1: idEntry, param2: tempGenreId.id[0]]
+                    insertAlbum = """INSERT INTO album_genres
+                                        (albumId, genreId) VALUES
+                                        (${idEntry}, ${tempGenreId.id[0]})"""
+                    sql.execute(insertAlbum)
+                }
+            } else {
+                def tempGenreId = sql.rows("""SELECT genres.id FROM genres WHERE genres.name = ${albumGenres}""")
+
                 insertAlbum = """INSERT INTO album_genres
-                    (albumId, genreId) VALUES
-                    (${params.param1}, ${params.param2})"""
+                                    (albumId, genreId) VALUES
+                                    (${idEntry}, ${tempGenreId.id[0]})"""
                 sql.execute(insertAlbum)
             }
         }
@@ -316,7 +321,8 @@ class TableService {
         }
     }
 
-    def updateRow(artist, albumTitle, songNumber, releaseDate, idOfAlbum, genreNames) {
+    def updateRow(artist, albumTitle, songNumber, releaseDate, idOfAlbum, genreNames,
+                  name, creator, isPopular, idOfGenre) {
         def sql = new Sql(dataSource)
 
         //χωρίζω την λογική σε δύο μέρη, ανάλογα με ποιο όρισμα υπάρχει.. αν πατήσω ενα update button, τα πεδία της άλλης φόρμας είναι null
@@ -360,7 +366,15 @@ class TableService {
             }
         }
         if (true) {
-
+            //Update Data in the selected row of album table
+            def isPopularBool = false
+            if (isPopular =='on') {isPopularBool = true}
+            def updateAlbumRow = """UPDATE genres SET 
+                                    name = ${name}, 
+                                    creator = ${creator}, 
+                                    isPopular = ${isPopularBool} 
+                                    WHERE id = ${idOfGenre} """
+            sql.execute(updateAlbumRow)
         }
     }
 }

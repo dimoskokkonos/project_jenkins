@@ -120,8 +120,15 @@ class AlbumController {
     def update() {
         def date = params.releaseDate_day + '-' + params.releaseDate_month + '-' + params.releaseDate_year
 
-        tableService.updateRow(params.artist, params.albumTitle, Integer.parseInt(params.songNumber),
-                date, Integer.parseInt(params.hiddenId), params.genres)
+        def songNumber, idAlbum, idGenre
+        if (params.songNumber) { songNumber = Integer.parseInt(params.songNumber) }
+        if (params.idFormAlbum) { idAlbum = Integer.parseInt(params.idFormAlbum) }
+        if (params.idFormGenre) { idGenre = Integer.parseInt(params.idFormGenre) }
+
+
+        tableService.updateRow(params.artist, params.albumTitle, songNumber, date, idAlbum, params.genres,
+                params.name, params.creator, params.isPopular, idGenre)
+
         redirect (action: 'list')
     }
 }

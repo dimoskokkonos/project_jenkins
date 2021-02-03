@@ -29,9 +29,8 @@
                          from="${genresData.name}"
                          size="5"
                          multiple="multiple"
-                         params="[genresData: genresData.id]"
-                         noSelection="['null':'-Choose the genre of music-']"/> <br />
-        <g:actionSubmit value="Save" action="update"/>
+                         params="[genresData: genresData.id]"/> <br />
+        <g:actionSubmit value="Save" action="insert"/>
       </g:form>
 
 
