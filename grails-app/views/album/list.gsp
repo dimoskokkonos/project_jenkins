@@ -7,6 +7,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" %>
 <%@ page contentType="text/html;charset=UTF-8" %>
+
 <html>
     <head>
         <title>View All Data</title>
@@ -45,13 +46,11 @@
                             <td>${row2}</td>
                         </g:each>
                         <td>
-                            <g:link controller="album" action="deleteOne" method="post" params="[entry:row[0]]">
+                            <g:link controller="album" action="deleteOne" method="post" params="[albumId: row[0]]">
                                 <input type="button" value="Delete Entry" class="button"/>
                             </g:link>
-
-%{--                            TODO: Implement update functionality to the button--}%
-                            <g:link controller="album" action="update" method="post">
-                                <input type="button" value="Edit --> WIP" class="button"/>
+                            <g:link controller="album" action="list" method="get" params="[formIdAlbum: row[0]]">
+                                <input type="button" value="Edit" class="button"/>
                             </g:link>
                         </td><br/>
                     </tr>
@@ -90,12 +89,10 @@
                         <td>${row.creator}</td>
                         <td>${row.isPopular}</td>
                         <td>
-                            <g:link controller="album" action="deleteOne" method="post" params="[entry2:row.id]">
+                            <g:link controller="album" action="deleteOne" method="post" params="[genreId: row.id]">
                                 <input type="button" value="Delete Genre" class="button"/>
                             </g:link>
-
-%{--                            TODO: Implement update functionality to the button--}%
-                            <g:link controller="album" action="update" method="post">
+                            <g:link controller="album" action="list" method="get" params="[formIdGenre: row.id]">
                                 <input type="button" value="Edit" class="button"/>
                             </g:link>
                         </td>
@@ -105,8 +102,35 @@
                 </table>
             </g:each><br/>
         </div><br/>
+        <div>
+            <h1>Edit an album entry</h1>
+            <g:form>
+                Name of artist: <g:textField required="true" name='artist' value="${formDataAlbum.artist}"/> <br />
+                Title of the album: <g:textField required="true" name='albumTitle' value="${formDataAlbum.albumtitle}"/> <br />
+                Number of songs: <g:textField required="true" name='songNumber' value="${formDataAlbum.songnumber}"/> <br />
+                Release Date: <g:datePicker name='releaseDate' precision="day" value="${formDataAlbum.releasedate}"/> <br />
+                <g:hiddenField name="hiddenId" value="${formDataAlbum.id}" />
+                    Genre: <g:select name="genres"
+                                 from="${dataGenresName}"
+                                 multiple="multiple"
+                                 value="${formDataGenresOfAlbum}" /> <br />
+                <g:actionSubmit value="Save" action="update" params="[id: 1]"/>
+            </g:form>
+        </div>
 
 
+        <div>
+            <h1>Edit a genre entry</h1>
+            <g:form>
+                Name of Music Genre: <g:textField required="true" name='name' value="${formDataGenres.name}"/> <br />
+                Name of Creator: <g:textField required="true" name='creator' value="${formDataGenres.creator}"/> <br />
+                Popular Music Genre: <g:checkBox  checked="false" name='isPopular' value="${formDataGenres.isPopular}"/> <br />
+                <g:hiddenField name="hiddenId" value="${formDataAlbum.id}" value="${formDataGenres.id}"/><br />
+                <g:actionSubmit value="Save" action="update"/>
+            </g:form>
+        </div>
+
+    <g:link controller="album" action="list">Refresh Page</g:link><br />
     <g:link controller="album" action="index">Return to Main Page</g:link><br />
     <g:link controller="album" action="remakeTables">AGAIN, BUT BETTER</g:link>
 

@@ -17,25 +17,38 @@
       <g:form controller="album" action="insert">
         Name of artist: <g:textField required="true" name='artist' /> <br />
         Title of the album: <g:textField required="true" name='albumTitle' /> <br />
+
+%{--    FIXME: Όταν επιλέγεται string ως είσοδος στο songNumber --> error... Πως θα αναγκάσω επιλογή integer?--}%
         Number of songs: <g:textField required="true" name='songNumber' /> <br />
         Release Date: <g:datePicker name='releaseDate' precision="day" /> <br />
 
+%{--        FIXME: Όταν δεν επιλέγω genre, έχει τιμή null που δεν είναι αποδεκτή..
+              Πως θα αναγκάσω επιλόγη έστω ενός ή θα βάλω default?--}%
 
         Genre: <g:select name="genres"
                          from="${genresData.name}"
+                         size="5"
                          multiple="multiple"
                          params="[genresData: genresData.id]"
-                         noSelection="['null':'-Choose the genre of music-']"/>
+                         noSelection="['null':'-Choose the genre of music-']"/> <br />
+        <g:actionSubmit value="Save" action="update"/>
+      </g:form>
+
+
+    </div>
+    <div>
+
+      <h1>Create new music genre</h1>
+      <g:form controller="album" action="insert">
+        Name of Music Genre: <g:textField required="true" name='name' /> <br />
+        Name of Creator: <g:textField required="true" name='creator' /> <br />
+        Popular Music Genre: <g:checkBox  checked="false" name='isPopular' /> <br />
         <g:actionSubmit value="Save" action="insert"/>
       </g:form>
 
-%{--      TODO: να προσθέσω φόρμα για την είσοδο genre--}%
-
-
-      <g:link controller="album" action="index">Return to Main Page</g:link><br />
     </div>
 
-
+    <g:link controller="album" action="index">Return to Main Page</g:link><br />
 
 
 

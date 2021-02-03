@@ -14,10 +14,11 @@ class AlbumController {
         redirect (action: 'index')
     }
 
-    def index() {
-    }
+    def index() {}
 
     def list() {
+
+        //Τμήμα κώδικα για το list των δεδομένων
         def selectOfTablesAlbumGenres = tableService.selectTables()
         def selectOfAlbumGenresRelation = tableService.manyGenres()
         def albumDataWithGenre = []
@@ -35,12 +36,42 @@ class AlbumController {
 
             albumDataWithGenre.add(temporaryMap)
         }
-        [genreData: selectOfTablesAlbumGenres.genresData, albumData: albumDataWithGenre]
+
+        //τμήμα κώδικα για την φόρμα του update στο album
+        // Κάνω click το edit, μου δίνει id της σειράς. Αν δεν έχω κάνει click ακόμα, αρχικοποίηση του map   με null
+        def dataRowAlbum = []
+        def dataGenresName = []
+        def formDataGenresOfAlbum = []
+
+
+        if (params.formIdAlbum) {
+            def tempAlbumDataOfRow = tableService.selectRow(params.formIdAlbum, "album")
+            dataRowAlbum = tempAlbumDataOfRow.dataRowAlbum[0]
+            dataGenresName = tempAlbumDataOfRow.dataGenresName.name
+            formDataGenresOfAlbum = tempAlbumDataOfRow.dataGenresOfTheRow.name
+
+        } else {
+            dataRowAlbum = [artist: null, albumtitle: null, songnumber:null, releasedate:null]
+        }
+
+        //τμήμα κώδικα για την φορμα του update στο genre. Ίδια λογική
+        def dataRowGenre =[]
+        if (params.formIdGenre) {
+            def tempAlbumDataOfRow = tableService.selectRow(params.formIdGenre, "genre")
+            dataRowGenre = tempAlbumDataOfRow.dataRowGenre[0]
+        } else {
+            dataRowGenre = [name: null, creator: null]
+        }
+
+        //έξοδος
+        [genreData: selectOfTablesAlbumGenres.genresData, albumData: albumDataWithGenre,
+         formDataAlbum: dataRowAlbum, dataGenresName: dataGenresName, formDataGenresOfAlbum: formDataGenresOfAlbum,
+         formDataGenres: dataRowGenre]
     }
 
     def deleteOne() {
-        if (params.entry) { tableService.deleteRowAlbum(Integer.parseInt(params.entry)) }
-        if (params.entry2) { tableService.deleteRowGenre(Integer.parseInt(params.entry2)) }
+        if (params.albumId) { tableService.deleteRowAlbum(Integer.parseInt(params.albumId)) }
+        if (params.genreId) { tableService.deleteRowGenre(Integer.parseInt(params.genreId)) }
 
         redirect (action: 'list')
     }
@@ -50,7 +81,7 @@ class AlbumController {
         tableService.tableCreation()
         tableService.insertInitialValue()
 
-        redirect (action: 'list')
+        redirect (action: 'index')
     }
 
     def create() {
@@ -62,15 +93,35 @@ class AlbumController {
 
     def insert() {
         def date = params.releaseDate_day + '-' + params.releaseDate_month + '-' + params.releaseDate_year
-        //TODO: να προσθέσω έξτρα μεταβλητές στην insertEntry ώστε να κανει διπλό insert
+        def inputSongNumber, inputIsPopular
 
-        tableService.insertEntry(params.artist, params.albumTitle,Integer.parseInt(params.songNumber), date, params.genres)
+        // Όταν κάνω κλικ το κουμπι για την υποβολή genre, επειδή χρησιμοποιώ το ίδιο insert service, πηγαίνει null
+        // στην parseInt εντολή --> error.. Η if αυτή στέλνει null ως είσοδο στο service όταν δεν υπάρχει η είσοδος songNumber
+        if (params.songNumber) {
+            inputSongNumber = Integer.parseInt(params.songNumber)
+        } else {
+            inputSongNumber = null
+        }
+
+        // Όταν είναι τικαρισμένο, παράγει έξοδο string = on, όταν όχι παράγει null.. όταν υπάρχει θέτω boolean είσοδο true, διαφορετικά false
+        if (params.isPopular) {
+            inputIsPopular = true
+        } else {
+            inputIsPopular = false
+        }
+
+        //πρώτη σειρά έχει εισόδους για insert album, δεύτερη για insert genre
+        tableService.insertEntry(params.artist, params.albumTitle, inputSongNumber, date,
+                params.genres, params.name, params.creator, inputIsPopular)
 
         redirect (action: 'create')
     }
 
     def update() {
-        //TODO: Να κάνω update crud fucntion.. Δεν έχω view.. Να δω που, πως θα γίνει το update.. funcionality όπως delOne ίσως
+        def date = params.releaseDate_day + '-' + params.releaseDate_month + '-' + params.releaseDate_year
+
+        tableService.updateRow(params.artist, params.albumTitle, Integer.parseInt(params.songNumber),
+                date, Integer.parseInt(params.hiddenId), params.genres)
         redirect (action: 'list')
     }
 }
