@@ -13,7 +13,13 @@
         <title>View All Data</title>
     </head>
     <body>
-
+        <div>
+            <h2>Search via album title</h2>
+            <g:form>
+                <g:textField name="searchTagAlbum" value="${searchTagAlbum}"/>
+                <g:actionSubmit value="Search" action="list"/>
+            </g:form>
+        </div>
         <div>
             <h1>The Album Data</h1>
             <table class="fixed">
@@ -60,6 +66,13 @@
         </div>
 
         <div>
+            <h2>Search via genre name</h2>
+            <g:form>
+                <g:textField name="searchTagGenre" value="${searchTagGenre}"/>
+                <g:actionSubmit value="Search" action="list"/>
+            </g:form>
+        </div>
+        <div>
             <h1>The Genre Data</h1>
             <table class="fixed">
                 <col width="120px" />
@@ -91,7 +104,7 @@
                         <td>
                             <g:link controller="album" action="deleteOne" method="post" params="[genreId: row.id]">
                                 <input type="button" value="Delete Genre" class="button"/>
-                            </g:link>
+                            </g:link> <br/>
                             <g:link controller="album" action="list" method="get" params="[formIdGenre: row.id]">
                                 <input type="button" value="Edit" class="button"/>
                             </g:link>
@@ -132,7 +145,5 @@
 
     <g:link controller="album" action="list">Refresh Page</g:link><br />
     <g:link controller="album" action="index">Return to Main Page</g:link><br />
-    <g:link controller="album" action="remakeTables">AGAIN, BUT BETTER</g:link>
-
     </body>
 </html>

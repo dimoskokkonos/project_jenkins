@@ -19,10 +19,21 @@ class AlbumController {
     def list() {
 
         //Τμήμα κώδικα για το list των δεδομένων
-        def selectOfTablesAlbumGenres = tableService.selectTables()
-        def selectOfAlbumGenresRelation = tableService.manyGenres()
-        def albumDataWithGenre = []
 
+        //Aν κάνω search πάω για το select με like, αλλιώς το select *
+        def selectOfTablesAlbumGenres
+        if (params.searchTagAlbum) {
+            selectOfTablesAlbumGenres = tableService.selectWithSearchFeature(params.searchTagAlbum, 'album')
+
+        } else if (params.searchTagGenre) {
+            selectOfTablesAlbumGenres = tableService.selectWithSearchFeature(params.searchTagGenre, 'genre')
+        } else {
+            selectOfTablesAlbumGenres = tableService.selectTables()
+        }
+
+        def selectOfAlbumGenresRelation = tableService.manyGenres(selectOfTablesAlbumGenres.albumData)
+
+        def albumDataWithGenre = []
         for (def i = 0; i <selectOfTablesAlbumGenres.albumData.size(); i++) {
             def temp = selectOfTablesAlbumGenres.albumData[i]
             def temporaryMap = []
@@ -62,7 +73,6 @@ class AlbumController {
         } else {
             dataRowGenre = [name: null, creator: null]
         }
-
         //έξοδος
         [genreData: selectOfTablesAlbumGenres.genresData, albumData: albumDataWithGenre,
          formDataAlbum: dataRowAlbum, dataGenresName: dataGenresName, formDataGenresOfAlbum: formDataGenresOfAlbum,
@@ -131,4 +141,5 @@ class AlbumController {
 
         redirect (action: 'list')
     }
+
 }

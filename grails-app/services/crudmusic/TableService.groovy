@@ -216,18 +216,20 @@ class TableService {
         return [albumData: dataOfAlbums, genresData: dataOfGenres]
     }
 
-    def manyGenres() {
+    def manyGenres(albumsID) {
         def sql = new Sql(dataSource)
-        def albumsID = sql.rows('SELECT id FROM album ORDER BY id ASC')
+//        def albumsID = sql.rows('SELECT id FROM album ORDER BY id ASC')
         def dataOfAlbumsGenre =[]
 
-        albumsID.each{id_tag ->
+
+        albumsID.each{entry ->
+            def id_tag = entry.id
             def tempMap = []
             def selectQuery = """
                 SELECT genres.name FROM genres 
                     INNER JOIN album_genres ON genres.id=album_genres.genreId
                     INNER JOIN album ON album.id=album_genres.albumId 
-                    WHERE albumId=${id_tag.id}
+                    WHERE albumId=${id_tag}
                 """;
             sql.eachRow(selectQuery) {row ->
                 tempMap.add("$row.name")
@@ -342,13 +344,8 @@ class TableService {
             //ελεγχος πόσα στοιχεία έχει το genreNames. Αν είναι map τότε μπαίνει εδώ, αν δεν είναι μπαίνει στο else να κανει single query και όχι iterate
             if (genreNames[0].size() > 1) {
                 genreNames.each { genreName ->
-                    println genreName
-
                     def idQuery = """SELECT genres.id FROM genres WHERE genres.name = ${genreName}"""
                     def idGenre = sql.rows(idQuery)
-
-                    println idOfAlbum
-                    println idGenre
 
                     def insertSqlManyToMany = """INSERT INTO album_genres 
                                         (albumId, genreId) VALUES 
@@ -376,5 +373,26 @@ class TableService {
                                     WHERE id = ${idOfGenre} """
             sql.execute(updateAlbumRow)
         }
+    }
+
+    def selectWithSearchFeature (searchStr, whichTable) {
+        def sql = new Sql(dataSource)
+
+        def strForLike = "%${searchStr}%"
+
+        def dataOfAlbum, dataOfGenres
+        if (whichTable=='album') {
+            def searchSelectQuery = """SELECT * FROM album WHERE album.albumTitle LIKE  '${strForLike}' ORDER BY id ASC"""
+            dataOfAlbum = sql.rows(searchSelectQuery)
+            dataOfGenres = sql.rows('SELECT * FROM genres ORDER BY id ASC')
+        } else {
+            dataOfAlbum = sql.rows( 'SELECT * FROM album ORDER BY id ASC')
+
+            println strForLike
+            def searchSelectQuery = """SELECT * FROM genres WHERE genres.name LIKE  '${strForLike}' ORDER BY id ASC"""
+            dataOfGenres = sql.rows(searchSelectQuery)
+        }
+
+        return [albumData: dataOfAlbum, genresData: dataOfGenres]
     }
 }
