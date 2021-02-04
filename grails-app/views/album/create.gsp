@@ -13,6 +13,7 @@
   <body>
     <div>
 
+
       <h1>Create new album</h1>
       <g:form controller="album" action="insert">
         Name of artist: <g:textField required="true" name='artist' /> <br />

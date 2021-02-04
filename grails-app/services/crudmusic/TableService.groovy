@@ -388,7 +388,6 @@ class TableService {
         } else {
             dataOfAlbum = sql.rows( 'SELECT * FROM album ORDER BY id ASC')
 
-            println strForLike
             def searchSelectQuery = """SELECT * FROM genres WHERE genres.name LIKE  '${strForLike}' ORDER BY id ASC"""
             dataOfGenres = sql.rows(searchSelectQuery)
         }
