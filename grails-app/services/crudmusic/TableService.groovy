@@ -2,7 +2,7 @@ package crudmusic
 
 import grails.gorm.transactions.Transactional
 import groovy.sql.Sql
-import java.sql.*
+
 @Transactional
 class TableService {
     def dataSource
@@ -291,8 +291,6 @@ class TableService {
                 (${parameters.param1}, ${parameters.param2}, ${parameters.param3})"""
             sql.execute(insertGenre)
         }
-
-
     }
 
     def selectRow(idRow, whichTable) {
@@ -382,6 +380,8 @@ class TableService {
 
         def dataOfAlbum, dataOfGenres
         if (whichTable=='album') {
+            //FIXME: join ηδη μουσικης.. search σε groovy οχι postgres
+
             def searchSelectQuery = """SELECT * FROM album WHERE album.albumTitle LIKE  '${strForLike}' ORDER BY id ASC"""
             dataOfAlbum = sql.rows(searchSelectQuery)
             dataOfGenres = sql.rows('SELECT * FROM genres ORDER BY id ASC')
