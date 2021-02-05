@@ -8,6 +8,7 @@ class AjaxForNoobsController {
     def index() { }
 
     def delete() {
+
         def trojan = [blah: 'blah', pineapple: 'unsolved']
         def row = [id: 1, name:'dimos', horseType: trojan, mouse: 'furry', childern: -1, eatingStatus: false]
 
