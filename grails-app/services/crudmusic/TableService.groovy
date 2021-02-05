@@ -340,35 +340,29 @@ class TableService {
             sql.execute(deleteRowsInAlbumGenreRelation)
 
             //ελεγχος πόσα στοιχεία έχει το genreNames. Αν είναι map τότε μπαίνει εδώ, αν δεν είναι μπαίνει στο else να κανει single query και όχι iterate
-            if (genreNames[0].size() > 1) {
-                genreNames.each { genreName ->
-                    def idQuery = """SELECT genres.id FROM genres WHERE genres.name = ${genreName}"""
-                    def idGenre = sql.rows(idQuery)
+            println genreNames
 
-                    def insertSqlManyToMany = """INSERT INTO album_genres 
-                                        (albumId, genreId) VALUES 
-                                         (${idOfAlbum}, ${idGenre[0].id})"""
-                    sql.execute(insertSqlManyToMany)
-                }
-            } else {
-                def idQuery = """SELECT genres.id FROM genres WHERE genres.name = ${genreNames}"""
+            genreNames.each { genreName ->
+                def idQuery = """SELECT genres.id FROM genres WHERE genres.name = ${genreName}"""
                 def idGenre = sql.rows(idQuery)
 
                 def insertSqlManyToMany = """INSERT INTO album_genres 
-                                        (albumId, genreId) VALUES 
-                                         (${idOfAlbum}, ${idGenre[0].id})"""
+                                    (albumId, genreId) VALUES 
+                                     (${idOfAlbum}, ${idGenre[0].id})"""
                 sql.execute(insertSqlManyToMany)
             }
-        }
-        if (true) {
+        } else {
+
             //Update Data in the selected row of album table
             def isPopularBool = false
-            if (isPopular =='on') {isPopularBool = true}
+            if (isPopular == 'on') {
+                isPopularBool = true
+            }
             def updateAlbumRow = """UPDATE genres SET 
-                                    name = ${name}, 
-                                    creator = ${creator}, 
-                                    isPopular = ${isPopularBool} 
-                                    WHERE id = ${idOfGenre} """
+                                name = ${name}, 
+                                creator = ${creator}, 
+                                isPopular = ${isPopularBool} 
+                                WHERE id = ${idOfGenre} """
             sql.execute(updateAlbumRow)
         }
     }

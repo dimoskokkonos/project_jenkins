@@ -1,5 +1,9 @@
 package crudmusicmk2
 
+import grails.converters.JSON
+import groovy.json.JsonBuilder
+import groovy.json.JsonSlurper
+
 class AlbumController {
 
     def tableService
@@ -53,17 +57,17 @@ class AlbumController {
         def dataRowAlbum = []
         def dataGenresName = []
         def formDataGenresOfAlbum = []
-
-
-        if (params.formIdAlbum) {
-            def tempAlbumDataOfRow = tableService.selectRow(params.formIdAlbum, "album")
-            dataRowAlbum = tempAlbumDataOfRow.dataRowAlbum[0]
-            dataGenresName = tempAlbumDataOfRow.dataGenresName.name
-            formDataGenresOfAlbum = tempAlbumDataOfRow.dataGenresOfTheRow.name
-
-        } else {
-            dataRowAlbum = [artist: null, albumtitle: null, songnumber:null, releasedate:null]
-        }
+//
+//
+//        if (params.formIdAlbum) {
+//            def tempAlbumDataOfRow = tableService.selectRow(params.formIdAlbum, "album")
+//            dataRowAlbum = tempAlbumDataOfRow.dataRowAlbum[0]
+//            dataGenresName = tempAlbumDataOfRow.dataGenresName.name
+//            formDataGenresOfAlbum = tempAlbumDataOfRow.dataGenresOfTheRow.name
+//
+//        } else {
+//            dataRowAlbum = [artist: null, albumtitle: null, songnumber:null, releasedate:null]
+//        }
 
         //τμήμα κώδικα για την φορμα του update στο genre. Ίδια λογική
         def dataRowGenre =[]
@@ -77,6 +81,21 @@ class AlbumController {
         [genreData: selectOfTablesAlbumGenres.genresData, albumData: albumDataWithGenre,
          formDataAlbum: dataRowAlbum, dataGenresName: dataGenresName, formDataGenresOfAlbum: formDataGenresOfAlbum,
          formDataGenres: dataRowGenre]
+    }
+
+    def editFormAlbum() {
+        //TODO: ΠΙΘΑΝΟ SERVICE ΕΔΩ ΜΕ ΤΟ FORM HANDLING ΤΟΥ ΑΛΜΠΟΥΜ
+            def tempAlbumDataOfRow = tableService.selectRow(params.editId, params.tableName)
+            def dataRowAlbum = tempAlbumDataOfRow.dataRowAlbum[0]
+            def dataGenresName = tempAlbumDataOfRow.dataGenresName.name
+            def formDataGenresOfAlbum = tempAlbumDataOfRow.dataGenresOfTheRow.name
+
+        def outputMap =[formDataAlbum: dataRowAlbum, dataGenresName: dataGenresName, formDataGenresOfAlbum: formDataGenresOfAlbum ]
+        render outputMap as JSON
+    }
+
+    def completeEditAlbumForm() {
+
     }
 
     def deleteOne() {
@@ -96,7 +115,9 @@ class AlbumController {
 
     def create() {
         def selectDataFromTables = tableService.selectTables()
+
         [genresData: selectDataFromTables.genresData]
+
     }
 
     def insert() {
@@ -126,7 +147,10 @@ class AlbumController {
     }
 
     def update() {
-        def date = params.releaseDate_day + '-' + params.releaseDate_month + '-' + params.releaseDate_year
+        def jsonSlurper = new JsonSlurper()
+        println params.genres
+        def genres = jsonSlurper.parseText(params.genres)
+//        def genres =  new JsonBuilder(new JsonSlurper().parseText( params.genres))
 
         def songNumber, idAlbum, idGenre
         if (params.songNumber) { songNumber = Integer.parseInt(params.songNumber) }
@@ -134,10 +158,43 @@ class AlbumController {
         if (params.idFormGenre) { idGenre = Integer.parseInt(params.idFormGenre) }
 
 
-        tableService.updateRow(params.artist, params.albumTitle, songNumber, date, idAlbum, params.genres,
+        tableService.updateRow(params.artist, params.albumTitle, songNumber, params.releaseDate, idAlbum, genres,
                 params.name, params.creator, params.isPopular, idGenre)
 
         redirect (action: 'list')
+    }
+
+    def selectAlbum() {
+        def selectOfTablesAlbumGenres
+        if (params.searchTagAlbum) {
+            selectOfTablesAlbumGenres = tableService.selectWithSearchFeature(params.searchTagAlbum, 'album')
+
+        } else if (params.searchTagGenre) {
+            selectOfTablesAlbumGenres = tableService.selectWithSearchFeature(params.searchTagGenre, 'genre')
+        } else {
+            selectOfTablesAlbumGenres = tableService.selectTables()
+        }
+
+        def selectOfAlbumGenresRelation = tableService.manyGenres(selectOfTablesAlbumGenres.albumData)
+
+        def albumDataWithGenre = []
+        for (def i = 0; i <selectOfTablesAlbumGenres.albumData.size(); i++) {
+            def temp = selectOfTablesAlbumGenres.albumData[i]
+            def temporaryMap = []
+
+            temporaryMap.add(temp.id)
+            temporaryMap.add(temp.artist)
+            temporaryMap.add(temp.albumTitle)
+            temporaryMap.add(temp.songNumber)
+            temporaryMap.add(temp.releaseDate)
+            temporaryMap.add(selectOfAlbumGenresRelation.dataOfAlbumsGenre[i].join(", "))
+
+            albumDataWithGenre.add(temporaryMap)
+        }
+
+        [genreData: selectOfTablesAlbumGenres.genresData, albumData: albumDataWithGenre]
+//        redirect (action: 'list')
+
     }
 
 }
