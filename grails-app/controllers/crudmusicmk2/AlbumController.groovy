@@ -96,9 +96,7 @@ class AlbumController {
 
     def create() {
         def selectDataFromTables = tableService.selectTables()
-
         [genresData: selectDataFromTables.genresData]
-
     }
 
     def insert() {
