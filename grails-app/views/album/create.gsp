@@ -48,7 +48,7 @@
 
     </div>
 
-    <g:link controller="album" action="index">Return to Main Page</g:link><br />
+    <g:link controller="album" action="list">Return to Main Page</g:link><br />
 
 
 

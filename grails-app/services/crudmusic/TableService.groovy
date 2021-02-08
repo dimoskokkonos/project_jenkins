@@ -294,6 +294,7 @@ class TableService {
     }
 
     def selectRow(idRow, whichTable) {
+        //TODO: να σπασω σε δυο service!
         def sql = new Sql(dataSource)
 
         if (whichTable == 'album') {
@@ -310,8 +311,8 @@ class TableService {
                     INNER JOIN album ON album.id=album_genres.albumId 
                     WHERE albumId=${Integer.parseInt(idRow)}
                 """;
-            def dataGenresOfTheRow = sql.rows(selectQuery)
-            return [dataRowAlbum: dataRowAlbum, dataGenresName: dataGenresName, dataGenresOfTheRow: dataGenresOfTheRow]
+            def dataRowGenres = sql.rows(selectQuery)
+            return [dataRowAlbum: dataRowAlbum, dataGenresName: dataGenresName, dataRowGenres: dataRowGenres]
 
         } else {
             def selectRowGenre = """SELECT * FROM genres WHERE genres   .id = ${Integer.parseInt(idRow) }"""
@@ -340,7 +341,6 @@ class TableService {
             sql.execute(deleteRowsInAlbumGenreRelation)
 
             //ελεγχος πόσα στοιχεία έχει το genreNames. Αν είναι map τότε μπαίνει εδώ, αν δεν είναι μπαίνει στο else να κανει single query και όχι iterate
-            println genreNames
 
             genreNames.each { genreName ->
                 def idQuery = """SELECT genres.id FROM genres WHERE genres.name = ${genreName}"""
@@ -355,9 +355,10 @@ class TableService {
 
             //Update Data in the selected row of album table
             def isPopularBool = false
-            if (isPopular == 'on') {
+            if (isPopular == 'true') {
                 isPopularBool = true
             }
+
             def updateAlbumRow = """UPDATE genres SET 
                                 name = ${name}, 
                                 creator = ${creator}, 
@@ -368,6 +369,7 @@ class TableService {
     }
 
     def selectWithSearchFeature (searchStr, whichTable) {
+
         def sql = new Sql(dataSource)
 
         def strForLike = "%${searchStr}%"
