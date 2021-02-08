@@ -326,9 +326,7 @@ class TableService {
                   name, creator, isPopular, idOfGenre) {
         def sql = new Sql(dataSource)
 
-        //χωρίζω την λογική σε δύο μέρη, ανάλογα με ποιο όρισμα υπάρχει.. αν πατήσω ενα update button, τα πεδία της άλλης φόρμας είναι null
         if (artist) {
-            //Update Data in the selected row of album table
             def updateAlbumRow = """UPDATE album SET 
                                     artist = ${artist}, albumTitle = ${albumTitle}, 
                                     songNumber = ${songNumber}, 
@@ -336,11 +334,8 @@ class TableService {
                                     WHERE id = ${idOfAlbum} """
             sql.execute(updateAlbumRow)
 
-            //Drop the genre to album connections of the selected row that existed and create the new ones
             def deleteRowsInAlbumGenreRelation = """DELETE FROM album_genres WHERE albumId = ${idOfAlbum}"""
             sql.execute(deleteRowsInAlbumGenreRelation)
-
-            //ελεγχος πόσα στοιχεία έχει το genreNames. Αν είναι map τότε μπαίνει εδώ, αν δεν είναι μπαίνει στο else να κανει single query και όχι iterate
 
             genreNames.each { genreName ->
                 def idQuery = """SELECT genres.id FROM genres WHERE genres.name = ${genreName}"""
@@ -352,8 +347,6 @@ class TableService {
                 sql.execute(insertSqlManyToMany)
             }
         } else {
-
-            //Update Data in the selected row of album table
             def isPopularBool = false
             if (isPopular == 'true') {
                 isPopularBool = true
@@ -369,7 +362,6 @@ class TableService {
     }
 
     def selectWithSearchFeature (searchStr, whichTable) {
-
         def sql = new Sql(dataSource)
 
         def strForLike = "%${searchStr}%"

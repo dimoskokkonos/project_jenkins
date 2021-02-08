@@ -64,15 +64,9 @@
                 $.ajax({
                     type: 'GET',
                     url:"<g:createLink url="[action:'update',controller:'album']" />",
-                    data: {
-                        //TODO: φορμα με ajax
-                        artist: $('#formName').val(),
-                        albumTitle: $('#formTitle').val(),
-                        songNumber: $('#formNumber').val(),
-                        releaseDate: date,
-                        genres: JSON.stringify($('#formSelect').val()),
-                        idFormAlbum: $('#hiddenAlbumId').val()  ,
-                    },
+                    data: $("form").serialize(),
+                    //     genres: JSON.stringify($('#formSelect').val()),
+                    // },
                     success: function() {
                         fetchAlbumData();
                     }
@@ -80,17 +74,10 @@
             }
 
             function submitEditedGenre() {
-                console.log($('#genreIsPopular').prop("checked"))
                 $.ajax({
                     type: 'GET',
                     url:"<g:createLink url="[action:'update',controller:'album']" />",
-                    data: {
-                        //TODO: φορμα με ajax
-                        name: $('#genreName').val(),
-                        creator: $('#genreCreator').val(),
-                        isPopular: $('#genreIsPopular').prop("checked"),
-                        idFormGenre: $('#idFormGenre').val(),
-                    },
+                    data: $("form").serialize(),
                     success: function() {
                         fetchGenreData();
                     }
@@ -304,7 +291,7 @@
                     <div class="row">
                         <h3 class="col-sm" align="left">Table Of Music Genres</h3>
                         <g:form id="form1" class="col-sm" align="right">
-                            <g:textField name="searchTagGenre" id="searchGenreByName" value="${searchTagGenre}"/>
+                            <g:textField name="searchTagGenre" id="searchGenreByName" value="${searchTagGenre}" placeholder="Enter Genre Name"/>
                             <button type="button" class="btn btn-outline-danger"
                                     onclick="searchBarFetchGenres()">Search</button>
                         </g:form>
@@ -367,7 +354,7 @@
                         </div>
                         <div class="form-group">
                             <label>Genre</label>
-                                <select class="form-control" multiple
+                                <select class="form-control" multiple name="formSelectedGenres"
                                         id="formSelect"/><br/>
                         </div>
                         <div><g:hiddenField name="idFormAlbum" id="hiddenAlbumId"/></div>
@@ -376,8 +363,8 @@
                     </g:form>
                 </div>
                 <div class="col-sm" align="right">
-                    <g:form align="middle">
-                        <h3>Edit an album entry</h3>
+                    <form align="middle">
+                        <h3>Edit an genre entry</h3>
                         <div class="form-group">
                             <label>Name of Music Genre</label>
                             <g:textField class="form-control" id="genreName" required="true" name='name'/>
@@ -393,7 +380,7 @@
                         <div><g:hiddenField name="idFormGenre"/></div>
                         <button type="button" class="btn btn-outline-info"
                                 onclick="submitEditedGenre()">Save</button>
-                    </g:form>
+                    </form>
                 </div>
             </div>
         </div><br/><br/>

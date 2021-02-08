@@ -6,49 +6,121 @@
 --%>
 
 <%@ page contentType="text/html;charset=UTF-8" %>
+<asset:stylesheet src="bootstrap.css"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
 <html>
   <head>
       <title></title>
+      <script>
+
+        function submitAlbum() {
+          if ( isNaN($("#songNumb").val() ) ) {
+            alert("Please input only a number")
+            return "hm huh"
+          }
+          // if ()
+          if ($("#genreSelect").val().length === 0) {
+            alert("Please select at least on music genre")
+            return "hm huh"
+          }
+
+          var form = $("form");
+          var url = "<g:createLink url="[action:'insert',controller:'album']" />";
+
+          $.ajax({
+            type: "POST",
+            url: url,
+            data: form.serialize(), // serializes the form's elements.
+            success: function()
+            {
+              // alert(data); // show response from the php script.
+            }
+          });
+        }
+      </script>
   </head>
   <body>
-    <div>
+  <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+    <div class="container-fluid">
+      <div class="collapse navbar-collapse">
 
+        <ul class="navbar-nav">
+          <li class="navbar-brand" align="left">Dimosthenis Kokkonos</li>
 
-      <h1>Create new album</h1>
-      <g:form controller="album" action="insert">
-        Name of artist: <g:textField required="true" name='artist' /> <br />
-        Title of the album: <g:textField required="true" name='albumTitle' /> <br />
-
-%{--    FIXME: Όταν επιλέγεται string ως είσοδος στο songNumber --> error... Πως θα αναγκάσω επιλογή integer?--}%
-        Number of songs: <g:textField required="true" name='songNumber' /> <br />
-        Release Date: <g:datePicker name='releaseDate' precision="day" /> <br />
-
-%{--        FIXME: Όταν δεν επιλέγω genre, έχει τιμή null που δεν είναι αποδεκτή..
-              Πως θα αναγκάσω επιλόγη έστω ενός ή θα βάλω default?--}%
-
-        Genre: <g:select name="genres"
-                         from="${genresData.name}"
-                         size="5"
-                         multiple="multiple"
-                         params="[genresData: genresData.id]"/> <br />
-        <g:actionSubmit value="Save" action="insert"/>
-      </g:form>
-
-
+          <li class="nav-item">
+            <g:link class="nav-link active" controller="album" action="create">Refresh Page</g:link>
+          </li>
+          <li class="nav-item">
+            <g:link class="nav-link active"  controller="album" action="index">View Table Data</g:link><br />
+          </li>
+          <li class="nav-item">
+            <g:link class="nav-link active"  controller="album" action="remakeTables">Remake the tables</g:link><br />
+          </li>
+        </ul>
+      </div>
     </div>
-    <div>
+  </nav>
+%{--          FIXME: Όταν επιλέγεται string ως είσοδος στο songNumber --> error... Πως θα αναγκάσω επιλογή integer?--}%
 
-      <h1>Create new music genre</h1>
-      <g:form controller="album" action="insert">
-        Name of Music Genre: <g:textField required="true" name='name' /> <br />
-        Name of Creator: <g:textField required="true" name='creator' /> <br />
-        Popular Music Genre: <g:checkBox  checked="false" name='isPopular' /> <br />
-        <g:actionSubmit value="Save" action="insert"/>
-      </g:form>
-
+  <br/> <br/> <br/>
+  <div class="container">
+      <div class="row">
+        <div class="col-sm" align="left">
+          <form align="middle" id="formAlbum">
+            <h3>Edit an album entry</h3>
+            <div class="form-group">
+              <label>Name of artist: </label>
+              <g:textField class="form-control" required="true" name='artist' />
+            </div>
+            <div class="form-group">
+              <label>Title of the album: </label>
+              <g:textField class="form-control" required="true" name='albumTitle' />
+            </div>
+            <div class="form-group">
+              <label>Number of songs: </label>
+              <g:textField class="form-control" required="true" name='songNumber' id="songNumb"/>
+            </div>
+            <div class="form-group">
+              <label>Release Date: </label>
+              <g:datePicker class="form-control"  name='releaseDate' precision="day" />
+            </div>
+            <div class="form-group" align="center">
+              <label>Genre: </label>
+              <g:select name="genres"
+                        id="genreSelect"
+                        class="form-control"
+                        from="${genresData.name}"
+                        size="5"
+                        multiple="multiple"
+                        params="[genresData: genresData.id]"
+              />
+            </div>
+            <button type="button" class="btn btn-outline-info"
+                    onclick="submitAlbum()">Submit</button>
+          </form>
+        </div>
+        <div class="col-sm" align="right">
+          <form align="middle">
+            <h3>Create new music genre</h3>
+            <div class="form-group">
+              <label>Name of Music Genre</label>
+              <g:textField class="form-control" required="true" name='name'/>
+            </div>
+            <div class="form-group">
+              <label>Name of Creator</label>
+              <g:textField class="form-control" required="true" name='creator'/>
+            </div>
+            <div class="form-group" id="numberBox">
+              <label>Popular Music Genre</label>
+              <g:checkBox  class="form-control" checked="false" name='isPopular' />
+            </div>
+            <button type="button" class="btn btn-outline-info"
+                    onclick="submitAlbum()">Submit</button>
+          </form>
+        </div>
+      </div>
     </div>
-
-    <g:link controller="album" action="list">Return to Main Page</g:link><br />
 
 
 

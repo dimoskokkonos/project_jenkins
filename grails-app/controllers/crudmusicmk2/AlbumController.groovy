@@ -82,6 +82,8 @@ class AlbumController {
     }
 
     def insert() {
+
+
         def date = params.releaseDate_day + '-' + params.releaseDate_month + '-' + params.releaseDate_year
         def inputSongNumber, inputIsPopular
 
@@ -105,14 +107,16 @@ class AlbumController {
 
     def update() {
         def jsonSlurper = new JsonSlurper()
+        def date = params.releaseDate_day + '-' + params.releaseDate_month + '-' + '-' + params.releaseDate_year
 
         def songNumber, idAlbum, idGenre, genres
         if (params.songNumber) { songNumber = Integer.parseInt(params.songNumber) }
         if (params.idFormAlbum) { idAlbum = Integer.parseInt(params.idFormAlbum) }
         if (params.idFormGenre) { idGenre = Integer.parseInt(params.idFormGenre) }
-        if (params.genres) { genres = jsonSlurper.parseText(params.genres) }
+        if (params.formSelectedGenres) { genres = params.formSelectedGenres.inspect() }
 
-        tableService.updateRow(params.artist, params.albumTitle, songNumber, params.releaseDate, idAlbum, genres,
+
+        tableService.updateRow(params.artist, params.albumTitle, songNumber, date, idAlbum, params.formSelectedGenres,
                 params.name, params.creator, params.isPopular, idGenre)
 
         redirect (action: 'list')
@@ -120,7 +124,9 @@ class AlbumController {
 
     def selectAlbum() {
         def selectOfTablesAlbumGenres = tableService.selectTables()
+        def selectOfAlbumGenresRelation = tableService.manyGenres(selectOfTablesAlbumGenres.albumData)
         def albumDataWithGenre = []
+
         selectOfTablesAlbumGenres.albumData.eachWithIndex{rowData, i ->
             def interiorDataMap = []
             interiorDataMap.add(rowData.id)
