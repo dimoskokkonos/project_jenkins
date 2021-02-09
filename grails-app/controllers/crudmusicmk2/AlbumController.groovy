@@ -39,8 +39,6 @@ class AlbumController {
             albumDataWithGenre.add(interiorDataMap)
         }
         [genreData: selectOfTablesAlbumGenres.genresData, albumData: albumDataWithGenre]
-
-
     }
 
     def editFormAlbum() {
@@ -82,8 +80,6 @@ class AlbumController {
     }
 
     def insert() {
-
-
         def date = params.releaseDate_day + '-' + params.releaseDate_month + '-' + params.releaseDate_year
         def inputSongNumber, inputIsPopular
 
@@ -92,13 +88,11 @@ class AlbumController {
         } else {
             inputSongNumber = null
         }
-
         if (params.isPopular) {
             inputIsPopular = true
         } else {
             inputIsPopular = false
         }
-
         tableService.insertEntry(params.artist, params.albumTitle, inputSongNumber, date,
                 params.genres, params.name, params.creator, inputIsPopular)
 
@@ -106,14 +100,12 @@ class AlbumController {
     }
 
     def update() {
-        def jsonSlurper = new JsonSlurper()
         def date = params.releaseDate_day + '-' + params.releaseDate_month + '-' + '-' + params.releaseDate_year
 
-        def songNumber, idAlbum, idGenre, genres
+        def songNumber, idAlbum, idGenre
         if (params.songNumber) { songNumber = Integer.parseInt(params.songNumber) }
         if (params.idFormAlbum) { idAlbum = Integer.parseInt(params.idFormAlbum) }
         if (params.idFormGenre) { idGenre = Integer.parseInt(params.idFormGenre) }
-        if (params.formSelectedGenres) { genres = params.formSelectedGenres.inspect() }
 
 
         tableService.updateRow(params.artist, params.albumTitle, songNumber, date, idAlbum, params.formSelectedGenres,
@@ -144,7 +136,6 @@ class AlbumController {
     }
 
     def searchAlbum() {
-        //TODO: NA ALLAKSW SE SEARCH SE MAP KAI OXI SE QUERY.. NEO SERVICE!
         def selectOfTablesAlbumGenres = tableService.selectWithSearchFeature(params.searchTagAlbum, 'album')
         def selectOfAlbumGenresRelation = tableService.manyGenres(selectOfTablesAlbumGenres.albumData)
 
@@ -165,7 +156,6 @@ class AlbumController {
     }
 
     def searchGenre() {
-        //TODO: NA ALLAKSW SE SEARCH SE MAP KAI OXI SE QUERY.. NEO SERVICE!
         def selectOfTablesAlbumGenres = tableService.selectWithSearchFeature(params.searchTagGenre, 'genre')
 
         selectOfTablesAlbumGenres.genresData.isPopular.eachWithIndex { val, index ->
@@ -177,7 +167,6 @@ class AlbumController {
     }
 
     def selectGenre() {
-        //TODO: NA ALLAKSW SE SEARCH SE MAP KAI OXI SE QUERY.. NEO SERVICE!
         def selectOfTablesAlbumGenres = tableService.selectTables()
 
         selectOfTablesAlbumGenres.genresData.isPopular.eachWithIndex { val, index ->
@@ -186,7 +175,6 @@ class AlbumController {
 
         def outputMap = [genreData: selectOfTablesAlbumGenres.genresData]
         render outputMap as JSON
-
     }
 
 }

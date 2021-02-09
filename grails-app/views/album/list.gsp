@@ -65,8 +65,6 @@
                     type: 'GET',
                     url:"<g:createLink url="[action:'update',controller:'album']" />",
                     data: $("form").serialize(),
-                    //     genres: JSON.stringify($('#formSelect').val()),
-                    // },
                     success: function() {
                         fetchAlbumData();
                     }
@@ -189,7 +187,6 @@
                     type: 'POST',
                     url:"<g:createLink url="[action:'searchGenre',controller:'album']" />",
                     data: {
-                        //TODO: φορμα με ajax
                         searchTagGenre: $('#searchGenreByName').val(),
                     },
                     success: function(data) {
@@ -218,10 +215,8 @@
     <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
         <div class="container-fluid">
             <div class="collapse navbar-collapse">
-
                 <ul class="navbar-nav">
                     <li class="navbar-brand" align="left">Dimosthenis Kokkonos</li>
-
                     <li class="nav-item">
                         <g:link class="nav-link active" controller="album" action="list">Refresh Page</g:link>
                     </li>

@@ -8,7 +8,6 @@ class TableService {
     def dataSource
 
     def tableCreation() {
-
         def sql = new Sql(dataSource)
         def createTableAlbum = """
             CREATE TABLE IF NOT EXISTS album (
@@ -43,7 +42,6 @@ class TableService {
     def insertInitialValue() {
         def sql = new Sql(dataSource)
 
-        // Insert for the album table
         def parameters = [param1: 'BobbyZ', param2: 'The Fly Airplane', param3: 9, param4: '01/01/2000']
         def insertAlbum = """INSERT INTO album
             (artist, albumTitle, songNumber, releaseDate) VALUES
@@ -69,7 +67,6 @@ class TableService {
         sql.execute(insertAlbum)
 
 
-        //Insert for musical genres tables
         parameters = [param1: 'Funk', param2: 'The all lawyer band', param3: true]
         def insertGenre = """INSERT INTO genres 
             (name, creator, isPopular) VALUES 
@@ -111,8 +108,6 @@ class TableService {
             (name, creator, isPopular) VALUES 
             (${parameters.param1}, ${parameters.param2}, ${parameters.param3})"""
         sql.execute(insertGenre)
-
-
 
         parameters = [param1: 1, param2: 1]
         def insertSqlManyToMany = """INSERT INTO album_genres 
@@ -218,9 +213,7 @@ class TableService {
 
     def manyGenres(albumsID) {
         def sql = new Sql(dataSource)
-//        def albumsID = sql.rows('SELECT id FROM album ORDER BY id ASC')
         def dataOfAlbumsGenre =[]
-
 
         albumsID.each{entry ->
             def id_tag = entry.id
@@ -253,14 +246,11 @@ class TableService {
                     genreName, genreCreator, genrePopularity) {
         def sql = new Sql(dataSource)
 
-        //Χρήση της εισόδου albumArtist: αν υπάρχει τότε έγινε κλικ του create album κουμπιού. Αλλιώς έγινε κλικ του κουμπιού
-        //create genre.. Η action insert μπορεί να γίνει μόνο από αυτά τα δύο κουμπιά.
         if (albumArtist) {
             def parameters = [param1: albumArtist, param2: albumTitle, param3: albumSongNumber, param4: albumReleaseDate]
             def insertAlbum = """INSERT INTO album
                 (artist, albumTitle, songNumber, releaseDate) VALUES
                 (${parameters.param1}, ${parameters.param2}, ${parameters.param3}, TO_DATE(${parameters.param4}, \'DD/MM/YYYY\'))"""
-
             def albumEntry = sql.executeInsert(insertAlbum)
             def idEntry = albumEntry[0][0]
 
@@ -283,7 +273,6 @@ class TableService {
             }
         }
 
-        //Για αποφυγή μελλοντικών λαθών, έλεγχος της μεταβλητής genreName και όχι χρήση else στην πάνω if
         if (genreName) {
             def parameters = [param1: genreName, param2: genreCreator, param3: genrePopularity]
             def insertGenre = """INSERT INTO genres 
@@ -294,7 +283,6 @@ class TableService {
     }
 
     def selectRow(idRow, whichTable) {
-        //TODO: να σπασω σε δυο service!
         def sql = new Sql(dataSource)
 
         if (whichTable == 'album') {
@@ -392,5 +380,25 @@ class TableService {
         }
 
         return [albumData: dataOfAlbum, genresData: dataOfGenres]
+    }
+
+    def initialSelect() {
+        def selectOfTablesAlbumGenres = selectTables()
+        def selectOfAlbumGenresRelation = manyGenres(selectOfTablesAlbumGenres.albumData)
+        def albumDataWithGenre = []
+
+        selectOfTablesAlbumGenres.albumData.eachWithIndex{rowData, i ->
+            def interiorDataMap = []
+            interiorDataMap.add(rowData.id)
+            interiorDataMap.add(rowData.artist)
+            interiorDataMap.add(rowData.albumTitle)
+            interiorDataMap.add(rowData.songNumber)
+            interiorDataMap.add(rowData.releaseDate)
+            interiorDataMap.add(selectOfAlbumGenresRelation.dataOfAlbumsGenre[i].join(", "))
+
+            albumDataWithGenre.add(interiorDataMap)
+        }
+
+        return [genreData: selectOfTablesAlbumGenres.genresData, albumData: albumDataWithGenre]
     }
 }
