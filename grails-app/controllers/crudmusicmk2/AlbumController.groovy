@@ -1,8 +1,6 @@
 package crudmusicmk2
 
 import grails.converters.JSON
-import groovy.json.JsonBuilder
-import groovy.json.JsonSlurper
 
 class AlbumController {
 

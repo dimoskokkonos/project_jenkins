@@ -229,6 +229,9 @@
                     <li class="nav-item">
                         <g:link class="nav-link active"  controller="album" action="create">Add Entries To Tables</g:link><br />
                     </li>
+                    <li class="nav-item">
+                        <g:link class="nav-link active"  controller="albumRest" action="index">Leap of Faith</g:link><br />
+                    </li>
                 </ul>
             </div>
         </div>
