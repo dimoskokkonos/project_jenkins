@@ -364,17 +364,28 @@ class TableService {
     def selectWithSearchFeature (searchStr, whichTable) {
         def sql = new Sql(dataSource)
 
-        def strForLike = "%${searchStr}%"
-
-        def dataOfAlbum, dataOfGenres
+        def strForPattern = /(.*)${searchStr}(.*)/
+        def dataOfAlbum = [], dataOfGenres = []
         if (whichTable=='album') {
-            //FIXME: join ηδη μουσικης.. search σε groovy οχι postgres
-
-            def searchSelectQuery = """SELECT * FROM album WHERE album.albumTitle LIKE  '${strForLike}' ORDER BY id ASC"""
-            dataOfAlbum = sql.rows(searchSelectQuery)
+            def dataOfAlbumAll = sql.rows('SELECT * FROM album ORDER BY id ASC')
             dataOfGenres = sql.rows('SELECT * FROM genres ORDER BY id ASC')
+
+            dataOfAlbumAll.each {dataRow ->
+                if (dataRow.albumtitle ==~ strForPattern) {
+                    dataOfAlbum.add(dataRow)
+                }
+            }
+
         } else {
             dataOfAlbum = sql.rows( 'SELECT * FROM album ORDER BY id ASC')
+            def dataOfGenresAll = sql.rows('SELECT * FROM genres ORDER BY id ASC')
+
+            dataOfGenresAll.each {dataRow ->
+                if (dataRow.name ==~ strForPattern) {
+                    dataOfGenres.add(dataRow)
+                }
+            }
+
 
             def searchSelectQuery = """SELECT * FROM genres WHERE genres.name LIKE  '${strForLike}' ORDER BY id ASC"""
             dataOfGenres = sql.rows(searchSelectQuery)
