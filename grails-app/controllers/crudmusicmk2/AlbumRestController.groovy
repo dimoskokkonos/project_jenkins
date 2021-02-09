@@ -17,7 +17,7 @@ class AlbumRestController {
         def selectOfAlbumGenresRelation = tableService.manyGenres(selectOfTablesAlbumGenres.albumData)
         def albumDataWithGenre = []
 
-        #FIXME: ίσως να μετατρεψω και του αρχικου project σε αυτη την μορφη?
+//        FIXME: ίσως να μετατρεψω και του αρχικου project σε αυτη την μορφη?
         selectOfTablesAlbumGenres.albumData.eachWithIndex{rowData, i ->
             def interiorDataMap = [artist: rowData.artist, artist: rowData.artist, albumTitle: rowData.albumTitle,
                            songNumber: rowData.songNumber, releaseDate: rowData.releaseDate,
