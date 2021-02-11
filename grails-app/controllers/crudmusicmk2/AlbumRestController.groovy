@@ -141,4 +141,12 @@ class AlbumRestController {
         def output = "Alert! Error 400 Alert!     Missformating in data names, inputs and/or types"
         render output
     }
+    def error405() {
+        def output = "Alert! Error 405 Alert!     The method is dissallowed!"
+        render output
+    }
+
+    def errorAction() {
+        return response.sendError(405, "This method is not allowed")
+    }
 }
