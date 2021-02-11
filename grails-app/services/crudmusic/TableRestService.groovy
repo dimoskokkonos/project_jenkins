@@ -10,6 +10,7 @@ class TableRestService {
 
     def selectAllAlbum() {
         def sql = new Sql(dataSource)
+
         def dataOfAlbums = sql.rows('SELECT * FROM album ORDER BY id ASC')
         def genresName = nameOfGenresInAlbum(dataOfAlbums)
 
@@ -29,6 +30,13 @@ class TableRestService {
         def dataOfGenres = sql.rows('SELECT * FROM genres ORDER BY id ASC')
 
         return [genresData: dataOfGenres]
+    }
+
+    def selectAllGenresOfAlbum() {
+        def sql = new Sql(dataSource)
+        def dataOfAlbumGenres = sql.rows('SELECT * FROM album_genres ORDER BY albumId ASC')
+        println dataOfAlbumGenres
+        return [albumGenresData: dataOfAlbumGenres]
     }
 
     def nameOfGenresInAlbum(albumsTable) {
@@ -53,6 +61,8 @@ class TableRestService {
     }
 
     def insertAlbums(albumArtist, albumTitle, albumSongNumber, albumReleaseDate) {
+        //TODO: check για αμα υπαρχει ηδη στον πινακα, να πεταει exception flag error number thingy και ναμην κρασαρει
+
         def sql = new Sql(dataSource)
 
         def parameters = [param1: albumArtist, param2: albumTitle, param3: albumSongNumber, param4: albumReleaseDate]
@@ -65,6 +75,8 @@ class TableRestService {
     }
 
     def insertGenres(genreName, genreCreator, genrePopularity) {
+        //TODO: check για αμα υπαρχει ηδη στον πινακα, να πεταει exception flag error number thingy και ναμην κρασαρει
+
         def sql = new Sql(dataSource)
 
         def popularity = false
@@ -80,6 +92,7 @@ class TableRestService {
     }
 
     def insertGenresOfAlbum(idAlbum, idGenre) {
+        //TODO: check για αμα υπαρχει ηδη στον πινακα, να πεταει exception flag error number thingy και ναμην κρασαρει
         def sql = new Sql(dataSource)
 
         def parameters = [param1: idAlbum, param2: idGenre]
@@ -89,5 +102,45 @@ class TableRestService {
         def insertOutput = sql.executeInsert(insertGenreOfAlbum)
 
         return insertOutput[0]
+    }
+
+    def updateAlbum(idAlbum, parameters) {
+        def sql = new Sql(dataSource)
+
+        def updateAlbumRow = """UPDATE album SET 
+                                    artist = ${parameters.artist}, albumTitle = ${parameters.albumTitle}, 
+                                    songNumber = ${parameters.songNumber}, 
+                                    releaseDate = TO_DATE(${parameters.releaseDate}, \'DD/MM/YYYY\') 
+                                    WHERE id = ${idAlbum} """
+        return sql.executeUpdate(updateAlbumRow)
+    }
+
+    def updateGenres(idGenres, parameters) {
+        def sql = new Sql(dataSource)
+
+        def popularity = false
+        if (parameters.isPopularBool == 'true') { popularity = true }
+
+        def updateGenreRow = """UPDATE genres SET 
+                                name = ${parameters.name}, 
+                                creator = ${parameters.creator}, 
+                                isPopular = ${popularity} 
+                                WHERE id = ${idGenres} """
+        return sql.executeUpdate(updateGenreRow)
+    }
+
+    def deleteAlbums(idAlbum) {
+        def sql = new Sql(dataSource)
+        sql.execute("DELETE FROM album WHERE id=${idAlbum}");
+    }
+
+    def deleteGenres(idGenre) {
+        def sql = new Sql(dataSource)
+        sql.execute("DELETE FROM genres WHERE id=${idGenre}");
+    }
+
+    def deleteGenresOfAlbum(idAlbum) {
+        def sql = new Sql(dataSource)
+        sql.execute("DELETE FROM genres WHERE id=${idGenre}");
     }
 }

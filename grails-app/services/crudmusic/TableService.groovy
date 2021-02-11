@@ -340,12 +340,12 @@ class TableService {
                 isPopularBool = true
             }
 
-            def updateAlbumRow = """UPDATE genres SET 
+            def updateGenreRow = """UPDATE genres SET 
                                 name = ${name}, 
                                 creator = ${creator}, 
                                 isPopular = ${isPopularBool} 
                                 WHERE id = ${idOfGenre} """
-            sql.execute(updateAlbumRow)
+            sql.execute(updateGenreRow)
         }
     }
 
