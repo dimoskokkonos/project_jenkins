@@ -8,40 +8,22 @@ import groovy.sql.Sql
 class TableRestService {
     def dataSource
 
-    def selectAllAlbum() {
+    def selectAlbumsQuery() {
         def sql = new Sql(dataSource)
-
         def dataOfAlbums = sql.rows('SELECT * FROM album ORDER BY id ASC')
-        def genresName = nameOfGenresInAlbum(dataOfAlbums)
-
-        def albumDataWithGenre = []
-        dataOfAlbums.eachWithIndex{rowData, i ->
-            def interiorDataMap = [id: rowData.id, artist: rowData.artist, artist: rowData.artist, albumTitle: rowData.albumTitle,
-                                   songNumber: rowData.songNumber, releaseDate: rowData.releaseDate,
-                                   genres: genresName.dataOfAlbumsGenre[i].join(", ")]
-            albumDataWithGenre.add(interiorDataMap)
-        }
-
-        return [albumData: albumDataWithGenre]
-    }
-
-    def selectAllGenres() {
-        def sql = new Sql(dataSource)
-        def dataOfGenres = sql.rows('SELECT * FROM genres ORDER BY id ASC')
-
-        return [genresData: dataOfGenres]
+        return [albumData: dataOfAlbums]
     }
 
     def selectAllGenresOfAlbum() {
         def sql = new Sql(dataSource)
         def dataOfAlbumGenres = sql.rows('SELECT * FROM album_genres ORDER BY albumId ASC')
-        println dataOfAlbumGenres
         return [albumGenresData: dataOfAlbumGenres]
     }
 
     def nameOfGenresInAlbum(albumsTable) {
         def sql = new Sql(dataSource)
         def dataOfAlbumsGenre =[]
+
 
         albumsTable.each{entry ->
             def id_tag = entry.id
@@ -60,9 +42,37 @@ class TableRestService {
         return [dataOfAlbumsGenre: dataOfAlbumsGenre]
     }
 
-    def insertAlbums(albumArtist, albumTitle, albumSongNumber, albumReleaseDate) {
-        //TODO: check για αμα υπαρχει ηδη στον πινακα, να πεταει exception flag error number thingy και ναμην κρασαρει
+    def selectAllAlbum() {
+        def dataOfAlbums = selectAlbumsQuery()
+        def genresNamesOfAlbum = nameOfGenresInAlbum(dataOfAlbums.albumData)
+        def albumDataWithGenre = mergeAlbumWithGenres(dataOfAlbums.albumData, genresNamesOfAlbum)
 
+        return albumDataWithGenre
+    }
+
+    def mergeAlbumWithGenres(dataOfAlbums, genresName) {
+        def albumDataWithGenre = []
+
+
+        dataOfAlbums.eachWithIndex{rowData, i ->
+
+            def interiorDataMap = [id: rowData.id, artist: rowData.artist, artist: rowData.artist, albumTitle: rowData.albumTitle,
+                                   songNumber: rowData.songNumber, releaseDate: rowData.releaseDate,
+                                   genres: genresName.dataOfAlbumsGenre[i].join(", ")]
+            albumDataWithGenre.add(interiorDataMap)
+        }
+    }
+
+    def selectAllGenres() {
+        def sql = new Sql(dataSource)
+        def dataOfGenres = sql.rows('SELECT * FROM genres ORDER BY id ASC')
+
+        return [genresData: dataOfGenres]
+    }
+
+
+
+    def insertAlbums(albumArtist, albumTitle, albumSongNumber, albumReleaseDate) {
         def sql = new Sql(dataSource)
 
         def parameters = [param1: albumArtist, param2: albumTitle, param3: albumSongNumber, param4: albumReleaseDate]
@@ -75,8 +85,6 @@ class TableRestService {
     }
 
     def insertGenres(genreName, genreCreator, genrePopularity) {
-        //TODO: check για αμα υπαρχει ηδη στον πινακα, να πεταει exception flag error number thingy και ναμην κρασαρει
-
         def sql = new Sql(dataSource)
 
         def popularity = false
@@ -92,7 +100,6 @@ class TableRestService {
     }
 
     def insertGenresOfAlbum(idAlbum, idGenre) {
-        //TODO: check για αμα υπαρχει ηδη στον πινακα, να πεταει exception flag error number thingy και ναμην κρασαρει
         def sql = new Sql(dataSource)
 
         def parameters = [param1: idAlbum, param2: idGenre]
@@ -142,5 +149,72 @@ class TableRestService {
     def deleteGenresOfAlbum(idAlbum) {
         def sql = new Sql(dataSource)
         sql.execute("DELETE FROM genres WHERE id=${idGenre}");
+    }
+
+    def albumsParamsValidator(albumsTable, paramsId, paramsAtr) {
+
+        if (paramsAtr) {
+            return albumsIdAndParam(paramsId, paramsAtr)
+        }
+        if (paramsId) {
+            return albumsIdOnly(paramsId)
+        }
+
+        return albumsTable
+    }
+
+    def albumsIdOnly(paramsId) {
+
+        if (paramsId.matches("[0-9]+")) {
+            def output = selectAlbumsById(paramsId as Integer)
+            return output.albumsDataByid
+        } else {
+            def output = selectAlbumsByColumns(paramsId)
+            return output
+        }
+
+    }
+
+    def selectAlbumsById(paramsId) {
+        def sql = new Sql(dataSource)
+
+        def selectQuery = """ SELECT * FROM album WHERE id=${paramsId} """;
+        def dataOfAlbums = sql.rows(selectQuery)
+
+        return [albumsDataByid: dataOfAlbums]
+    }
+
+    def selectAlbumsByColumns(paramsColumns) {
+        def sql = new Sql(dataSource)
+
+        if (albumContainsKey(paramsColumns)) {
+            def selectQuery = """ SELECT """ + paramsColumns + """ FROM album""";
+            def dataOfAlbums = sql.rows(selectQuery)
+
+            return dataOfAlbums
+        } else {
+            return "ERROR FLAG"
+        }
+    }
+
+    def albumContainsKey( paramsColumns ) {
+        def sql = new Sql(dataSource)
+
+        def dataOfAlbum = sql.rows('SELECT * FROM album LIMIT 1')
+        def flagTheColumnsIsAKeyInAlbums = dataOfAlbum[0].keySet().contains( paramsColumns )
+        return flagTheColumnsIsAKeyInAlbums
+    }
+
+    def albumsIdAndParam(paramsId, paramsColumn) {
+        def sql = new Sql(dataSource)
+
+        if (albumContainsKey(paramsColumn)) {
+            def selectQuery = """ SELECT """ + paramsColumn + """ FROM album WHERE id=${paramsId} """;
+            def dataOfAlbums = sql.rows(selectQuery)
+
+            return dataOfAlbums[0]
+        } else {
+            return "ERROR FLAG"
+        }
     }
 }

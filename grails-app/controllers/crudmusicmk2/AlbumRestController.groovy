@@ -4,67 +4,109 @@ import grails.converters.JSON
 
 class AlbumRestController {
 //    def tableService
+    // na kanw flowchart se xarti.. exw klisi: 1( tage validation.. exw params? an nai, vgazoun noima? Eimai ok? parakatw, den eimai, efuge (response
+    // estw oti eimai ok (den exw parameters, i exw me swstes times). Kanw search stoxeumeno.. formating twn dedomenwn 9epistrefw sugkekrimeno attribute)
+    // na kanw validate
     def tableRestService
 
     def index() { }
 
     def showAlbums() {
         def albumsTable = tableRestService.selectAllAlbum()
-        if (params.id) {
-            def output = []
-            if (params.id.matches("[0-9]+")) {
-                def checkId = params.id as Integer
-                output = albumsTable.albumData.findAll{ it.id == checkId}
+        def albumData = tableRestService.albumsParamsValidator(albumsTable, params.id, params.atr)
 
-                if (output == []) { return response.sendError(401, "Album ID was not found") }
-                render output[0] as JSON
-            } else {
-                if(albumsTable.albumData[0][params.id]) {
-                    albumsTable.albumData.each{ rowOfAlbum ->
-                        output.add(rowOfAlbum[params.id])
-                    }
-                    render output as JSON
-                } else { return response.sendError(401, "The album table does not have this attribute") }
-            }
-
-            if (params.atr) {
-                def attribute = params.atr
-                if (!output[0][attribute]) { return response.sendError(401, "The album table does not have this attribute") }
-                else {
-                    def response = [output[0][attribute]]
-                    render response as JSON
-                }
-            }
+        //TODO: πως κανω render και response μαζι??
+        if (albumData == [] || albumData== "ERROR FLAG") {
+            response.sendError(404, "Album ID was not found")
+        } else {
+            render albumData as JSON
         }
-        render albumsTable.albumData as JSON
+
+//
+//        if (params.id) {
+//
+//
+//            def output = []
+//
+//            if (params.id.matches("[0-9]+")) {
+//                def checkId = params.id as Integer
+//                output = albumsTable.albumData.findAll{ it.id == checkId}
+//
+//                if (output == []) { return response.sendError(401, "Album ID was not found") }
+//                render output[0] as JSON
+//
+//            } else {
+//
+//                if(albumsTable.albumData[0][params.id]) {
+//                    albumsTable.albumData.each{ rowOfAlbum ->
+//                        output.add(rowOfAlbum[params.id])
+//                    }
+//                    render output as JSON
+//                } else { return response.sendError(401, "The album table does not have this attribute") }
+//
+//            }
+//
+//            if (params.atr) {
+//
+//                println params.atr
+//
+//                def attribute = params.atr
+//
+//                if (!output[0][attribute]) { return response.sendError(401, "The album table does not have this attribute") }
+//                else {
+//                    def response = [output[0][attribute]]
+//                    render response as JSON
+//                }
+//
+//            }
+//
+//        } else {
+//            render albumsTable.albumData as JSON
+//        }
     }
 
     def showGenres() {
         def genresTable = tableRestService.selectAllGenres()
         if (params.id) {
-            def checkId
+
+            def output = []
             if (params.id.matches("[0-9]+")) {
-                println params.id
+
+                def checkId = params.id as Integer
+                output = genresTable.genresData.findAll{ it.id == checkId }
+
             } else {
-                checkId = params.id as Integer
+                println genresTable.genresData[0]
+
+//                if(genresTable.genresData[0][params.id]) {
+                if (genresTable.genresData[0].containsKey(params.id)) {
+                    genresTable.genresData.each{ rowOfGenre ->
+                        output.add(rowOfGenre[params.id])
+                    }
+                    render output as JSON
+                } else {
+                    return response.sendError(401, "The genre table does not have this attribute")
+                }
             }
-            def output = genresTable.genresData.findAll{ it.id == checkId}
 
             if (output == []) {
                 return response.sendError(401, "Genre ID was not found")
             }
             if (params.atr) {
                 def attribute = params.atr
-                if (!output[0][attribute]) {
+
+                if (!genresTable.genresData[0].containsKey(attribute)) {
                     return response.sendError(401, "The album genres does not have this attribute")
                 } else {
                     def response = [output[0][attribute]]
                     render response as JSON
                 }
+            } else {
+                render output[0] as JSON
             }
-            render output[0] as JSON
+        } else {
+            render genresTable.genresData as JSON
         }
-        render genresTable.genresData as JSON
     }
 
     def showGenresOfAlbum() {
@@ -103,7 +145,7 @@ class AlbumRestController {
 
     def updateAlbums() {
         def parameters = [artist: params.artistName, albumTitle: params.title, songNumber: params.howManySongs as Integer, releaseDate: params.dateOfRelease]
-        def status = tableRestService.updateAlbum(params.id as Integer, parameters)
+        def status = tableRestService.update Album(params.id as Integer, parameters)
         if (status == 0) {
             return response.sendError(400, "Album ID was not found")
         }

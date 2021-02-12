@@ -3,6 +3,12 @@ package crudmusicmk2
 import grails.converters.JSON
 
 class AlbumController {
+    //TODO: grails create-test <nameofContoller>
+    //test-app MusifyControllerspec          // open test-report
+    //mock: ftiaxnw pseftiko service, tin kalw kai lew ti apotelesma tha parei
+    //unit test se ervice δεν εχει νοημα.. η λειτουργια του unit test ξαρταται απο βαση
+
+    //unit se controller, integrational se service, functional einai se olo to sunolo..
 
     def tableService
 
