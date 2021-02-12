@@ -1,4 +1,4 @@
-package crudmusic
+package crudmusicmk2
 
 import grails.gorm.transactions.Transactional
 import groovy.sql.Sql

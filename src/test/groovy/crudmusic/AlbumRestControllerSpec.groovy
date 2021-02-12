@@ -1,9 +1,12 @@
-package crudmusicmk2
+package crudmusic
 
+import crudmusicmk2.AlbumRestController
 import grails.testing.web.controllers.ControllerUnitTest
+//import org.grails.testing.GrailsUnitTest
 import spock.lang.Specification
 
 class AlbumRestControllerSpec extends Specification implements ControllerUnitTest<AlbumRestController> {
+//    def controller
 
     def setup() {
     }
@@ -11,8 +14,10 @@ class AlbumRestControllerSpec extends Specification implements ControllerUnitTes
     def cleanup() {
     }
 
-    void "test something"() {
-        expect:"fix me"
-            true == false
+    void "lol and lol"() {
+        when:
+            controller.hello()
+        then:
+            println response.text
     }
 }

@@ -73,6 +73,7 @@ dependencies {
     testRuntime "org.seleniumhq.selenium:selenium-chrome-driver:3.14.0"
     testRuntime "org.seleniumhq.selenium:selenium-firefox-driver:3.14.0"
 
+
     runtime "org.postgresql:postgresql:42.2.18"
 }
 
@@ -94,10 +95,14 @@ tasks.withType(GroovyCompile) {
     }
 }
 
-webdriverBinaries {
-    chromedriver '2.45.0'
-    geckodriver '0.24.0'
-}
+//webdriverBinaries {
+//    chromedriver '2.45.0'
+//    geckodriver '0.24.0'
+//}
+//webdriverBinaries {
+//    chromedriver '88.0.4324.96'
+//    geckodriver '0.24.0'
+//}
 
 tasks.withType(Test) {
     systemProperty "geb.env", System.getProperty('geb.env')

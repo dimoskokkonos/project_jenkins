@@ -9,60 +9,22 @@ class AlbumRestController {
     // na kanw validate
     def tableRestService
 
+    def hello() {
+        render 'Hello, World!'
+    }
+
     def index() { }
 
     def showAlbums() {
         def albumsTable = tableRestService.selectAllAlbum()
         def albumData = tableRestService.albumsParamsValidator(albumsTable, params.id, params.atr)
 
-        //TODO: πως κανω render και response μαζι??
         if (albumData == [] || albumData== "ERROR FLAG") {
             response.sendError(404, "Album ID was not found")
         } else {
             render albumData as JSON
         }
 
-//
-//        if (params.id) {
-//
-//
-//            def output = []
-//
-//            if (params.id.matches("[0-9]+")) {
-//                def checkId = params.id as Integer
-//                output = albumsTable.albumData.findAll{ it.id == checkId}
-//
-//                if (output == []) { return response.sendError(401, "Album ID was not found") }
-//                render output[0] as JSON
-//
-//            } else {
-//
-//                if(albumsTable.albumData[0][params.id]) {
-//                    albumsTable.albumData.each{ rowOfAlbum ->
-//                        output.add(rowOfAlbum[params.id])
-//                    }
-//                    render output as JSON
-//                } else { return response.sendError(401, "The album table does not have this attribute") }
-//
-//            }
-//
-//            if (params.atr) {
-//
-//                println params.atr
-//
-//                def attribute = params.atr
-//
-//                if (!output[0][attribute]) { return response.sendError(401, "The album table does not have this attribute") }
-//                else {
-//                    def response = [output[0][attribute]]
-//                    render response as JSON
-//                }
-//
-//            }
-//
-//        } else {
-//            render albumsTable.albumData as JSON
-//        }
     }
 
     def showGenres() {

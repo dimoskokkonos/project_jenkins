@@ -1,6 +1,6 @@
-package crudmusic
+package crudmusicmk2
 
-import grails.converters.JSON
+
 import grails.gorm.transactions.Transactional
 import groovy.sql.Sql
 
