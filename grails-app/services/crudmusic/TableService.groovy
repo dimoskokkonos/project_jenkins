@@ -388,10 +388,6 @@ class TableService {
                     dataOfGenres.add(dataRow)
                 }
             }
-
-
-            def searchSelectQuery = """SELECT * FROM genres WHERE genres.name LIKE  '${strForLike}' ORDER BY id ASC"""
-            dataOfGenres = sql.rows(searchSelectQuery)
         }
 
         return [albumData: dataOfAlbum, genresData: dataOfGenres]
