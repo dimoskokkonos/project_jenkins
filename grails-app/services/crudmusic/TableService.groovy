@@ -325,15 +325,30 @@ class TableService {
             def deleteRowsInAlbumGenreRelation = """DELETE FROM album_genres WHERE albumId = ${idOfAlbum}"""
             sql.execute(deleteRowsInAlbumGenreRelation)
 
-            genreNames.each { genreName ->
-                def idQuery = """SELECT genres.id FROM genres WHERE genres.name = ${genreName}"""
+            if (genreNames[0].length() > 1) {
+
+                genreNames.each { genreName ->
+                    def idQuery = """SELECT genres.id FROM genres WHERE genres.name = ${genreName}"""
+                    def idGenre = sql.rows(idQuery)
+
+
+                    def insertSqlManyToMany = """INSERT INTO album_genres 
+                                    (albumId, genreId) VALUES 
+                                     (${idOfAlbum}, ${idGenre[0].id})"""
+                    sql.execute(insertSqlManyToMany)
+                }
+            } else {
+                def idQuery = """SELECT genres.id FROM genres WHERE genres.name = ${genreNames}"""
                 def idGenre = sql.rows(idQuery)
+
 
                 def insertSqlManyToMany = """INSERT INTO album_genres 
                                     (albumId, genreId) VALUES 
                                      (${idOfAlbum}, ${idGenre[0].id})"""
                 sql.execute(insertSqlManyToMany)
             }
+
+
         } else {
             def isPopularBool = false
             if (isPopular == 'true') {
