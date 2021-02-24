@@ -9,7 +9,7 @@ pipeline {
           }
         }
 
-        stage('') {
+        stage('The temp stage') {
           steps {
             retry(count: 23) {
               echo 'temp'
@@ -21,10 +21,10 @@ pipeline {
       }
     }
 
-    stage('') {
+    stage('The testing stage') {
       steps {
         echo 'asdasdas'
-        build(quietPeriod: 4, wait: true, job: 'grails run-app')
+        mail(subject: 'The Mail Subject', body: 'Not spam', from: 'dkokkonos@knowledge.com', to: 'dimoskokkonos20@gmail.com')
       }
     }
 
