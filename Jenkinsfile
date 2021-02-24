@@ -13,9 +13,15 @@ pipeline {
       }
     }
 
-    stage('Renaming') {
+    stage('Changing Working Directory') {
       steps {
-        powershell 'ren C:\\Users\\dkokkonos\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\AlbumCrudJenkinsMk1\\build\\libs\\AlbumCrudJenkinsMk1-0.1.war haha.war'
+        powershell 'cd C:\\Users\\dkokkonos\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\AlbumCrudJenkinsMk1\\build\\libs\\'
+      }
+    }
+
+    stage('Renaming war file') {
+      steps {
+        powershell 'ren AlbumCrudJenkinsMk1-0.1.war AlbumCrudJenkinsMk1.war'
       }
     }
 
