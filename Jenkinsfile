@@ -16,7 +16,10 @@ pipeline {
     stage('Changing Working Directory') {
       steps {
         powershell 'cd C:\\Users\\dkokkonos\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\AlbumCrudJenkinsMk1\\build\\libs\\'
-        dir(path: 'C:\\Users\\dkokkonos\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\AlbumCrudJenkinsMk1\\build\\libs\\')
+        dir(path: 'C:\\Users\\dkokkonos\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\AlbumCrudJenkinsMk1\\build\\libs\\') {
+          powershell 'ren AlbumCrudJenkinsMk1-0.1.war AlbumCrudJenkinsMk1.war'
+        }
+
         powershell 'get-location'
         powershell 'ren AlbumCrudJenkinsMk1-0.1.war AlbumCrudJenkinsMk1.war'
       }
