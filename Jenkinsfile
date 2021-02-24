@@ -20,14 +20,6 @@ pipeline {
           powershell 'ren AlbumCrudJenkinsMk1-0.1.war AlbumCrudJenkinsMk1.war'
         }
 
-        powershell 'get-location'
-        powershell 'ren AlbumCrudJenkinsMk1-0.1.war AlbumCrudJenkinsMk1.war'
-      }
-    }
-
-    stage('Renaming war file') {
-      steps {
-        powershell 'ren AlbumCrudJenkinsMk1-0.1.war AlbumCrudJenkinsMk1.war'
       }
     }
 
