@@ -1,30 +1,21 @@
 pipeline {
   agent any
   stages {
-    stage('Check Dir') {
-      parallel {
-        stage('Check Dir') {
-          steps {
-            pwd()
-          }
-        }
-
-        stage('The temp stage') {
-          steps {
-            retry(count: 23) {
-              echo 'temp'
-            }
-
-          }
-        }
-
+    stage('Building Project') {
+      steps {
+        build(job: 'AlbumCrud Jenkins Mk1', quietPeriod: 5, wait: true)
       }
     }
 
-    stage('The testing stage') {
+    stage('Check if war files is created') {
       steps {
-        echo 'asdasdas'
-        mail(subject: 'The Mail Subject', body: 'Not spam', from: 'dkokkonos@knowledge.com', to: 'dimoskokkonos20@gmail.com')
+        fileExists 'AlbumCrud Jenkins Mk1-0.1.war'
+      }
+    }
+
+    stage('') {
+      steps {
+        pwd()
       }
     }
 
