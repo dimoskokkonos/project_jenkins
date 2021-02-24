@@ -27,7 +27,7 @@ pipeline {
     stage('Delete Libs') {
       steps {
         dir(path: 'C:\\Users\\dkokkonos\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\AlbumCrudJenkinsMk1\\build\\libs\\') {
-          powershell 'Remove-Item \'AlbumCrudJenkinsMk1\\WEB-INF\\lib\''
+          powershell 'Remove-Item \'AlbumCrudJenkinsMk1\\WEB-INF\\lib\' -Force'
         }
 
       }
