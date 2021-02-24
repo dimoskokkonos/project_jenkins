@@ -15,7 +15,7 @@ pipeline {
 
     stage('Renaming') {
       steps {
-        sh 'ren .\\build\\libs\\AlbumCrudJenkinsMk1-0.1.war AlbumCrudJenkinsMk1.war'
+        sh 'ren C:\\Users\\dkokkonos\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\AlbumCrudJenkinsMk1\\build\\libsAlbumCrudJenkinsMk1-0.1.war AlbumCrudJenkinsMk1.war'
       }
     }
 
