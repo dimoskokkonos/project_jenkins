@@ -15,7 +15,7 @@ pipeline {
 
     stage('Renaming') {
       steps {
-        bat 'ren C:\\Users\\dkokkonos\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\AlbumCrudJenkinsMk1\\build\\libs\\AlbumCrudJenkinsMk1-0.1.war haha.war'
+        powershell 'ren C:\\Users\\dkokkonos\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\AlbumCrudJenkinsMk1\\build\\libs\\AlbumCrudJenkinsMk1-0.1.war haha.war'
       }
     }
 
