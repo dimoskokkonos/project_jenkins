@@ -18,7 +18,7 @@ pipeline {
         powershell 'cd C:\\Users\\dkokkonos\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\AlbumCrudJenkinsMk1\\build\\libs\\'
         dir(path: 'C:\\Users\\dkokkonos\\AppData\\Local\\Jenkins\\.jenkins\\workspace\\AlbumCrudJenkinsMk1\\build\\libs\\') {
           powershell 'ren AlbumCrudJenkinsMk1-0.1.war AlbumCrudJenkinsMk1.war'
-          powershell ' 7z x AlbumCrudJenkinsMk1.warr -oAlbumCrudJenkinsMk1'
+          powershell ' 7z x AlbumCrudJenkinsMk1.war -oAlbumCrudJenkinsMk1'
         }
 
       }
