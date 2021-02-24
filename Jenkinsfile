@@ -3,7 +3,7 @@ pipeline {
   stages {
     stage('Building Project') {
       steps {
-        build(job: 'AlbumCrud Jenkins Mk1', quietPeriod: 5, wait: true)
+        build(job: 'AlbumCrudJenkinsMk1', quietPeriod: 5, wait: true)
       }
     }
 
@@ -13,9 +13,9 @@ pipeline {
       }
     }
 
-    stage('') {
+    stage('Renaming') {
       steps {
-        pwd()
+        sh 'ren .\\build\\libs\\AlbumCrudJenkinsMk1-0.1.war AlbumCrudJenkinsMk1.war'
       }
     }
 
